@@ -1,0 +1,48 @@
+body{
+    background-color: darkkhaki;
+}
+.main{
+    background-image: url('/img/images2.jpeg');
+    background-position: center center;
+    background-size: cover;
+    height: auto;
+    left: 0;
+    min-height: 100%;
+    min-width: 100%;
+    position: absolute;
+    top: 0;
+    width: auto;
+}
+
+
+.view{
+    font-size: 18px;
+    margin-bottom: 30px;
+    position: relative;
+    text-align: center;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.33);
+    font-family: 'Grand Hotel',cursive;
+}
+
+h1{
+    color: black;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 300%;
+}
+
+th, td {
+    padding-right: 5px;
+    border: 1px solid blue;
+    border-width: thin;
+    background-origin: padding-box;
+
+}
+
+.alignleft {
+    float: left;
+    padding-left: 50px;
+}
+.alignright {
+    float: right;
+    padding-right: 50px;
+}

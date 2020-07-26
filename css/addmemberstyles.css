@@ -1,0 +1,158 @@
+h1{
+    padding: 50px;
+    border: 1px solid rebeccapurple;
+    background-color: thistle;
+    margin: 10px;
+  
+}
+
+body {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 3px solid violet;
+    background-color: wheat;
+    margin: 10px 10px 20px 10px;
+    
+
+    color: #5D6063;
+    background-color: #EAEDF0;
+    background-image: url(/img/images1.jpeg);
+    font-family: "Helvetica", "Arial", sans-serif;
+    font-size: 16px;
+    line-height: 1.3;
+    align-items: center;
+  }
+
+  
+  .member-form-header {
+    align-items: center;
+    text-align: center;
+    background-color: #F6F7F8;
+    border: 1px solid #D6D9DC;
+    border-radius: 3px;
+    
+    /* width: 80%; */
+    margin-top: 10 px;
+    margin-bottom: 20 px;
+    /* padding: 50px; */
+  }
+  
+  .member-form-header h1 {
+    font-size: 30px;
+    margin-bottom: 20px;
+  }
+
+  .member-form {
+    display: block;
+    align-items: center;
+
+    background-color: #F6F7F8;
+    border: 1px solid #D6D9DC;
+    border-radius: 3px;
+    padding: 10px 10px 10px 10px;
+    margin: 20px 20px 20px 20px;
+    width: 80%;
+
+  }
+
+  .form-row {
+    margin-bottom: 40px;
+    /* display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    flex-wrap: wrap; */
+  }
+  
+  .form-row input[type='text'],
+  .form-row input[type='email'] {
+    background-color: #FFFFFF;
+    border: 1px solid #D6D9DC;
+    border-radius: 3px;
+    width: 80%;
+    padding: 7px;
+    font-size: 14px;
+  }
+  
+  .form-row label {
+    margin-bottom: 15px;
+  }
+
+  .form-row .checkbox-label {
+    margin-bottom: 0;
+  }
+
+  .form-row button {
+    font-size: 16px;
+    font-weight: bold;
+  
+    color: #FFFFFF;
+    background-color: #5995DA;
+  
+    border: none;
+    border-radius: 3px;
+  
+    padding: 10px 40px;
+    cursor: pointer;
+  }
+  
+  .form-row input[type='submit'] {
+    background-color: #76AEED;
+  }
+  
+  .form-row button:hover {
+    background-color: #76AEED;
+  }
+  
+  .form-row button:active {
+    background-color: #407FC7;
+  }
+
+  .view{
+    font-size: 18px;
+    margin-bottom: 30px;
+    position: relative;
+    text-align: center;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.33);
+    font-family: 'Grand Hotel',cursive;
+  }
+
+  .alignleft {
+    float: left;
+    padding-left: 50px;
+  }
+  .alignright {
+    float: right;
+    padding-right: 50px;
+  }
+
+  @media only screen and (min-width: 700px) {
+    .study-form-header,
+    .study-form {
+      width: 600px;
+    }
+    .form-row {
+     /* flex-direction: row; */
+      align-items: flex-start; /* To avoid stretching */
+      margin-bottom: 20px;
+    }
+    .form-row input[type='text'], 
+    .form-row input[type='email'],
+    .form-row input[type='submit'],
+    .form-row select,
+    .form-row textarea {
+      width: 250px;
+      height: initial;
+    }
+    .form-row label {
+      text-align: right;
+      width: 120px;
+      margin-top: 7px;
+      padding-right: 20px;
+    }
+    .form-row .checkbox-label {
+      margin-left: 120px;
+      width: auto;
+    }
+  }
