@@ -18,9 +18,9 @@
 
         //sql306.byetcluster.com
 
-        $database = "epiz_26355818_familydb";        # Get these database details from
-        $host =  "sql306.epizy.com:3306";  # the web console
-        $user     = "epiz_26355818";   #
+        $database = "epiz_26361741_imoviesdb";        # Get these database details from
+        $host =  "sql310.epizy.com:3306";  # the web console
+        $user     = "epiz_26361741";   #
         $password = "myfreehost";   #
         $port     = 3306;           #
         $options = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'); 
@@ -29,8 +29,8 @@
         
         $database = "familydb";        # Get these database details from
         $host =  "localhost;dbname=familydb";  # the web console
-        $user     = "gokul";   #
-        $password = "password";   #
+        $user     = "imovies";   #
+        $password = "Vit2020@project";   #
         $port     = 3306;           #
         $options = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8');         
     }
