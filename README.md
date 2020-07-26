@@ -16,4 +16,33 @@ User: epiz_26361741
 MySQL: sql310.epizy.com
 
 
+GIT LIBRARY and commmands: 
+====================
+Git library : gokxl/imovies
+
+One time setup
+git clone https://github.com/gokxl/iMovies.git
+git init
+git config 
+
+
+git add -A  // add specific file to staging area
+git commit  //commit those changes
+git push  .......optional"master origin"
+
+
+.gitignore // to ignore specific files
+
+git branch -a  // list of branches.
+
+git branch branchname   //create local branch to work on files 
+git checkout branchname
+
+
+git diff  //check the difference in current modifications
+
+
+
+
+
 
