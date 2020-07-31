@@ -1,44 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'/>
-    <meta name="viewport" content="width=device-width"/>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
-    <title>Your Website Is Ready - InfinityFree</title>
-    <link rel="stylesheet" href="css/indexstyles.css">
-    <!--     Fonts     -->
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href='https://fonts.googleapis.com/css?family=Grand+Hotel' rel='stylesheet' type='text/css'>
-
+    <title>Welcome to my new Home Page - Karups</title>
 </head>
 
-<body>
-<div class="main">
-    <div class="cover black" data-color="black"></div>
-    <div class="container">
-        <h1 class="logo cursive">
-            Welcome to my first PHP project
-        </h1>
 
-        <div class="content">
-            <h4 class="motto">Basic PHP & SQL operations implemented</h4>
-            <div class="subscribe">
-                <h5 class="info-text">
-                    View Family Table <a href="./viewfamily.php" target="_self">View Family</a>
-                </h5>
+
+<body>
+
+    <div class="container-fluid  p-3 my-3 bg-primary text-white text-center">
+        <h1>Welcome to my Home Page</h1>
+        <p>Resize this responsive page to see the effect!</p>
+    </div>
+
+    <div class="container">
+
+        <div class="card-deck">
+            <div class="card bg-primary" style="width:200px">
+                <img class="card-img-top" src="./img/profile.png" alt="Card image" style="width:100%">
+                <div class="card-body">
+                    <h4 class="card-title">Profile</h4>
+                    <p class="card-text">Use this option to create/update your profile</p>
+                </div>
+                <div class="card-footer">
+                    <a href="#" class="btn btn-warning">Click here</a>
+                </div>
             </div>
-        </div>
+
+            <div class="card bg-warning" style="width:200px">
+                <img class="card-img-top" src="./img/movies.png" alt="Card image" style="width:100%">
+                <div class="card-body">
+                    <h4 class="card-title">Movies</h4>
+                    <p class="card-text">Use this option to view movies showing currently</p>
+                </div>
+                <div class="card-footer">
+                    <a href="./viewMovies.php" class="btn btn-primary">Click here</a>
+                </div>
+            </div>
+
+            <div class="card bg-primary" style="width:200px">
+                <img class="card-img-top" src="./img/family.png" alt="Card image" style="width:100%">
+                <div class="card-body">
+                    <h4 class="card-title">Family</h4>
+                    <p class="card-text">Use this option to view current family members</p>
+                </div>
+                <div class="card-footer">
+                    <a href="./viewfamily.php" class="btn btn-warning">Click here</a>
+                </div>
+
+            </div>
+
+            <div class="card bg-warning" style="width:200px">
+                <img class="card-img-top" src="./img/booking.jpg" alt="Card image" style="width:100%">
+                <div class="card-body">
+                    <h4 class="card-title">Bookings</h4>
+                    <p class="card-text">Use this option to view your history of bookings</p>
+                </div>
+                <div class="card-footer">
+                    <a href="#" class="btn btn-primary">Click here</a>
+                </div>
+            </div>
+
+        </div> <BR>
+
+
+        <div class="container-fluid  p-3 my-3 bg-primary text-white text-center">
+        <h3>Developed using following technology stack:</h3>
+        <p>PHP, MySQL, Apache, HTML5, CSS, Bootstrap. </p>
+        <p small> VS Code as IDE, GitHub as Source Code Library and free hosting at Infinityfree! :) </p>
     </div>
-    <div class="footer">
-        <div class="container">
-            Proudly powered by <br>
-            <a href="https://infinityfree.net"><img src="https://vpassets.infinityfree.net/welcome2017/logo.png" alt="InfinityFree" height="40px"></a>
-        </div>
-    </div>
-</div>
- 
+
+
 </body>
+
 </html>
