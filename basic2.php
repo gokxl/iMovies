@@ -1,97 +1,63 @@
 <?php
-
-//Test Sessions variable with hardcoding
-// $_SESSION["uid"]="Karups";
-// $_SESSION["pwd"]="1234";
-
-
-if (isset($_SESSION["uid"])) {
-    $uid = $_SESSION["uid"];
-}
-
-if (
-    isset($_POST["login"]) && !empty($_POST["uid"])
-    && !empty($_POST["pwd"])
-) {
+    
+    //Test Sessions variable with hardcoding
+   // $_SESSION["uid"]="Karups";
+   // $_SESSION["pwd"]="1234";
 
 
-    if (empty($_POST["isadmin"])) {
-        $isadmin = FALSE;
-        $_SESSION["isadmin"] = FALSE;
-    } else {
-        $isadmin = TRUE;
-        $_SESSION["isadmin"] = TRUE;
-    }
+   if (isset($_SESSION["uid"])) {    
+        echo "I am in Index2";
+       $uid = $_SESSION["uid"];  
+       echo $uid;  
+   }
+   $msg = '';   
+   
+   if (isset($_POST["login"]) && !empty($_POST["uid"]) 
+      && !empty($_POST["pwd"])) {
+       
+      if ($_POST["uid"] == "karups" && 
+         $_POST["pwd"] == "1234") {
+         $_SESSION['valid'] = true;
+         $_SESSION['timeout'] = time();
+         $_SESSION['uid'] = $_POST["uid"];
+         $_SESSION["pwd"] = $_POST["pwd"];
+         
+         $uid = $_SESSION['uid'];
+         $pwd = $_SESSION['pwd'];
 
-    $uid = $_POST['uid'];
-    $pwd = $_POST['pwd'];
-
-    include './database/config/config.php';
-    // if Login as Admin is checked, use admin table. Or use user table.
-    if ($isadmin) {
-        if ($connection == "local") {
-            $t_admin = "admin";
-        } else {
-            $t_admin = "$database.admin";
-        }
-    } else {
-        if ($connection == "local") {
-            $t_customer = "customer";
-        } else {
-            $t_customer = "$database.customer";
-        }
-    }
-    //echo "table name is $t_user";
-
-    try {
-        $db = new PDO("mysql:host=$host", $user, $password, $options);
-        //echo "Database connected successfully <BR>";
-
-        if ($isadmin) {
-            $sql_select = "Select * from $t_admin where admin_username = '$uid' and admin_pwd = '$pwd'";
-            //echo "SQL Statement is : $sql_select <BR>";
-        } else {
-            $sql_select = "Select * from $t_customer where cust_username =  '$uid' and cust_pwd = '$pwd'";
-            //echo "SQL Statement is : $sql_select <BR>";
-        }
-
-        $stmt = $db->prepare($sql_select);
-        $stmt->execute();
-
-        if ($rows = $stmt->fetch()) {
-            //echo   $rows['username'];
-            //echo '<script>alert("Login Successful")</script>';
-            $_SESSION['valid'] = TRUE;
-            $_SESSION['uid'] = $_POST["uid"];
-            $_SESSION["pwd"] = $_POST["pwd"];
-        } else {
-            echo '<script>alert("Invalid Username or Password. Try again")</script>';
-        }
-    } catch (PDOException $e) {
-        print "Error!: " . $e->getMessage() . "<br/>";
-        die();
-    }
-}
+         if (isset($_POST["isadmin"])) {
+             $isamin = TRUE;
+             $_SESSION["isadmin"]=TRUE;
+         } else {
+             $isadmin = FALSE;
+             $_SESSION["isadmin"]=FALSE;
+         }
+         $isadmin = $_SESSION["isadmin"];
+         echo "value of isadmin is $isadmin";
+         
+      }else {
+         echo '<script>alert("Invalid Username or Password. Try again")</script>';
+      }
+   }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>Welcome Home - Karups</title>
+    <title>Bootstrap 4 Website Example</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Popper JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <!-- Latest compiled JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-
-
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .fakeimg {
+            height: 200px;
+            background: #aaa;
+        }
+    </style>
 </head>
 
 <body>
@@ -117,8 +83,7 @@ if (
             ?>
                 <!-- Set rightside navbar links if no user signed-in -->
                 <ul class="navbar-nav navbar-right">
-                    <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown">
-                            <?php if ($isadmin) { ?> <i class="fa fa-user-secret"></i> <?php } ?> Welcome
+                    <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown"> Welcome
                             <?php echo $uid; ?></a>
                         <ul class="dropdown-menu">
                             <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
@@ -238,7 +203,7 @@ if (
                 </div>
             </div>
 
-            <!-- Carousel ends here which occupies 10/12 of width -->
+                <!-- Carousel ends here which occupies 10/12 of width -->
 
 
         </div>

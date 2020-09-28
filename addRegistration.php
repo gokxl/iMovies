@@ -188,58 +188,121 @@ if (
 
                 </div>
             </div>
-            <!-- Carousel begins here which occupies 10/12 of width -->
 
-            <div class="col-sm-10">
-                <div id="demo" class="carousel slide" data-ride="carousel">
+            <!--registration form starts here -->
+            <div class="container-sm" style="Width:80%">
 
-                    <!-- Indicators -->
-                    <ul class="carousel-indicators">
-                        <li data-target="#demo" data-slide-to="0" class="active"></li>
-                        <li data-target="#demo" data-slide-to="1"></li>
-                    </ul>
-
-                    <!-- The slideshow -->
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
+                <div class="login-form">
+                    <form action="./insertRegistration.php" method="post">
+                        <h2 class="text-center">Registration Form</h2>
+                        <div class="container-fluid">
                             <div class="row">
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <span class="fa fa-user"></span>
+                                                </span>
+                                            </div>
+                                            <input type="text" name="cname" id="cname" class="form-control" placeholder="Customer Name" required="required">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="fa fa-list-ol "></i>
+                                                </span>
+                                            </div>
+                                            <input type="number" name="cage" id="cage" class="form-control" placeholder="Customer Age" required="required">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <select class="form-control" id="cgender" name="cgender" placeholder="Select Gender">
+                                            <option>m</option>
+                                            <option>f</option>
+                                            <option>t</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <span class="fa fa-envelope"></span>
+                                                </span>
+                                            </div>
+                                            <input type="email" name="cemail" id="cemail" class="form-control" placeholder="Customer Email" required="required">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <span class="fa fa-mobile "></span>
+                                                </span>
+                                            </div>
+                                            <input type="tel" name="cphone" id="cphone" class="form-control" placeholder="Customer Mobile Number" required="required">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="carousel-item">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
+
+                        <div class="container-sm" style="Width:40%">
+
+                            <div class="login-form">
+                                <form action="./index2.php" method="post">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <span class="fa fa-user"></span>
+                                                </span>
+                                            </div>
+                                            <input type="text" name="cuser" id="cuser" class="form-control" placeholder="Customer Username" required="required">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="fa fa-lock"></i>
+                                                </span>
+                                            </div>
+                                            <input type="password" name="cpwd" id="cpwd" class="form-control" placeholder="Password" required="required">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="fa fa-lock"></i>
+                                                </span>
+                                            </div>
+                                            <input type="password" name="cpwd1" id="cpwd1" class="form-control" placeholder="Confirm Password" required="required">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" name="register" class="btn btn-primary btn-block">Register</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                        <!-- Left and right controls -->
-                        <a class="carousel-control-prev" href="#demo" data-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </a>
-                        <a class="carousel-control-next" href="#demo" data-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </a>
-                    </div>
                 </div>
             </div>
 
-            <!-- Carousel ends here which occupies 10/12 of width -->
-
+            <!--registration form ends here -->
 
         </div>
     </div>
