@@ -4,83 +4,11 @@
 // $_SESSION["uid"]="Karups";
 // $_SESSION["pwd"]="1234";
 
-echo "entering index2<br>";
+
 if (isset($_SESSION["uid"])) {
     $uid = $_SESSION["uid"];
-    echo "session uid is $uid";
 }
 
-if (
-    isset($_POST["login"]) && !empty($_POST["uid"])
-    && !empty($_POST["pwd"])
-) {
-
-
-    if (empty($_POST["isadmin"])) {
-        $isadmin = FALSE;
-        $_SESSION["isadmin"] = FALSE;
-    } else {
-        $isadmin = TRUE;
-        $_SESSION["isadmin"] = TRUE;
-    }
-
-    $uid = $_POST['uid'];
-    $pwd = $_POST['pwd'];
-
-    include './database/config/config.php';
-    // if Login as Admin is checked, use admin table. Or use user table.
-    if ($isadmin) {
-        if ($connection == "local") {
-            $t_admin = "admin";
-        } else {
-            $t_admin = "$database.admin";
-        }
-    } else {
-        if ($connection == "local") {
-            $t_customer = "customer";
-        } else {
-            $t_customer = "$database.customer";
-        }
-    }
-    //echo "table name is $t_user";
-
-    try {
-        $db = new PDO("mysql:host=$host", $user, $password, $options);
-        //echo "Database connected successfully <BR>";
-
-        if ($isadmin) {
-            $sql_select = "Select * from $t_admin where admin_username = '$uid' and admin_pwd = '$pwd'";
-            //echo "SQL Statement is : $sql_select <BR>";
-            $flag = 1;
-        } else {
-            $sql_select = "Select * from $t_customer where cust_username =  '$uid' and cust_pwd = '$pwd'";
-            //echo "SQL Statement is : $sql_select <BR>";
-        }
-
-        $stmt = $db->prepare($sql_select);
-        $stmt->execute();
-
-        if ($rows = $stmt->fetch()) {
-            if ($flag = 1) {
-                $_SESSION['valid'] = TRUE;
-                $_SESSION['uid'] = $_POST["uid"];
-                $_SESSION["pwd"] = $_POST["pwd"];
-                header("Location: ./adminIndex.php");
-                exit();
-            }
-            //echo   $rows['username'];
-            //echo '<script>alert("Login Successful")</script>';
-            $_SESSION['valid'] = TRUE;
-            $_SESSION['uid'] = $_POST["uid"];
-            $_SESSION["pwd"] = $_POST["pwd"];
-        } else {
-            echo '<script>alert("Invalid Username or Password. Try again")</script>';
-        }
-    } catch (PDOException $e) {
-        print "Error!: " . $e->getMessage() . "<br/>";
-        die();
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -126,7 +54,7 @@ if (
             ?>
                 <!-- Set rightside navbar links if no user signed-in -->
                 <ul class="navbar-nav navbar-right">
-                    <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown">Welcome <?php echo $uid; ?></a>
+                    <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user-secret"></i> Welcome<?php echo $uid; ?></a>
                         <ul class="dropdown-menu">
                             <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
                             <li><a href="#"> <i class="fa fa-briefcase"></i> My Bookings</a></li>

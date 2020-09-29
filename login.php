@@ -66,6 +66,7 @@ if (isset($_SESSION["uid"])) {
 
 <body>
 
+
     <!-- Header section goes here -->
     <div class="container-fluid text-center bg-primary text-white pt-3">
         <h1>iMovies - Online Movie Reservation System</h1>
@@ -77,7 +78,7 @@ if (isset($_SESSION["uid"])) {
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
         <div class="container-fluid">
             <!-- Brand -->
-            <a class="navbar-brand" href="#">iMovies</a>
+            <a class="navbar-brand" href="index2.php">iMovies</a>
 
             <!-- Rightside navbar Links: Set based on User signed-in or not-->
             <?php
@@ -193,7 +194,7 @@ if (isset($_SESSION["uid"])) {
                             <a href="#" class="float-right">Forgot Password?</a>
                         </div>
                     </form>
-                    <p class="text-center small">Don't have an account! <a href="#">Sign up here</a>.</p>
+                    <p class="text-center small">Don't have an account! <a href="addRegistration.php">Sign up here</a>.</p>
                 </div>
 
             </div>
