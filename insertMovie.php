@@ -1,57 +1,9 @@
-<?php
-
-session_start();
-
-if (isset($_SESSION["uid"])) {
-    $uid = $_SESSION["uid"];
-}
-
-if (
-    isset($_POST["login"]) && !empty($_POST["uid"])
-    && !empty($_POST["pwd"])
-) {
-    $uid = $_POST['uid'];
-    $pwd = $_POST['pwd'];
-
-    include './database/config/config.php';
-     //set table name based on local or remote connection
-    if ($connection == "local") {
-        $t_admin = "admin";
-    } else {
-        $t_admin = "$database.admin";
-    }
-
-    try {
-        $db = new PDO("mysql:host=$host", $user, $password, $options);
-        //echo "Database connected successfully <BR>";
-
-        $sql_select = "Select * from $t_admin where admin_username = '$uid' and admin_pwd = '$pwd'";
-
-        $stmt = $db->prepare($sql_select);
-        $stmt->execute();
-
-        if ($rows = $stmt->fetch()) {
-            $_SESSION['valid'] = TRUE;
-            $_SESSION['uid'] = $uid;
-            $_SESSION["pwd"] = $pwd;
-            $_SESSION["isadmin"]=TRUE;
-        } else {
-            echo '<script>alert("Invalid Username or Password. Try again")</script>';
-        }
-    } catch (PDOException $e) {
-        print "Error!: " . $e->getMessage() . "<br/>";
-        die();
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>Welcome Home - Karups</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
@@ -63,10 +15,56 @@ if (
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
-
+    <title>Insert New Movie</title>
 </head>
 
 <body>
+
+    <?php
+
+    session_start();
+
+    if (isset($_SESSION["uid"])) {
+        $uid = $_SESSION["uid"];
+    }
+    if (isset($_SESSION["isadmin"])) {
+        $isadmin = TRUE;
+    }
+
+    //Read HTML FORM submitted values using POST Method
+    $iname = str_replace("'", "\'", $_POST['mov_name']);
+    $icast = str_replace("'", "\'", $_POST['mov_cast']);
+    $idirect = str_replace("'", "\'", $_POST['mov_direct']);
+    $ilang = $_POST['mov_lang'];
+    $ireldate = $_POST['mov_rel_date'];
+    $iimg = basename($_FILES["fileToUpload"]["name"]);
+    $idesc = str_replace("'", "\'", $_POST['mov_short_desc']);
+
+    uploadImage(); // Upload the image to temporary folder
+
+    $ifn = moveImageToDatabase($iname,$ilang); // Move from temp to target folder
+
+    include './database/config/config.php';
+    if ($connection == "local"){
+        $t_movies = "movies";
+    }else {
+        $t_movies = "$database.movies";
+    }
+
+    try { 
+        $db = new PDO("mysql:host=$host",$user,$password,$options);
+        echo "Database connected successfully <BR>";
+
+        $sql_insert = "INSERT INTO $t_movies (movie_title, movie_cast, movie_director, movie_image_fn, movie_language, 
+            movie_release_date, movie_description)  VALUES ('$iname', '$icast' , '$idirect','$ifn', '$ilang', 
+            date('$ireldate'),'$idesc' )";
+        //echo "SQL Statement $sql_insert";
+        $stmt = $db->prepare($sql_insert);
+        $rows = $stmt->execute(array());
+        //echo "Rows  $rows <BR>";
+
+        If ($rows>0){   ?>
+
 
     <!-- Header section goes here -->
     <div class="container-fluid text-center bg-primary text-white pt-3">
@@ -172,68 +170,120 @@ if (
 
                 </div>
             </div>
-            <!-- Carousel begins here which occupies 10/12 of width -->
 
-            <div class="col-sm-10">
-                <div id="demo" class="carousel slide" data-ride="carousel">
+            <div class="container">
+                <h4>Folloing new movie added successfully..... </h4>
+                <div class="card-group">
+                    <div class="card bg-primary" style="width:200px">
 
-                    <!-- Indicators -->
-                    <ul class="carousel-indicators">
-                        <li data-target="#demo" data-slide-to="0" class="active"></li>
-                        <li data-target="#demo" data-slide-to="1"></li>
-                    </ul>
-
-                    <!-- The slideshow -->
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                            </div>
+                        <div class="card-body">
+                            <h3 class="card-title"><?php echo $iname,"(",$ilang,")"; ?></h3>
+                            <h4 class="card-text">Cast: <?php echo $icast; ?></h4>
+                            <h5 class="card-text">Directed by: <?php echo $idirect; ?></h5>
+                            <h5 class="card-text">Release Date: <?php echo $ireldate; ?></h5>
+                            <p class="card-text">Summary: <?php echo $idesc; ?></p>
                         </div>
-                        <div class="carousel-item">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Left and right controls -->
-                        <a class="carousel-control-prev" href="#demo" data-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </a>
-                        <a class="carousel-control-next" href="#demo" data-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </a>
                     </div>
+
+                    <div class="card bg-warning" style="width:200px">
+                        <img class="card-img-top" src="./database/images/<?php echo $ifn; ?>" alt="Card image"
+                            style="width:100%">
+                        <div class="card-footer">
+                            <h4 class="card-text">Language: <?php echo $ilang; ?></h4>
+                        </div>
+                    </div>
+                </div>
+            </div> <BR>
+
+            <!-- footer section goes here-->
+
+            <div class="navbar fixed-bottom">
+                <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
+                    <h3> Developed using following technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap,
+                        Javascript.</h3>
                 </div>
             </div>
 
-            <!-- Carousel ends here which occupies 10/12 of width -->
+            <?php
+        }else{
+            echo "Error Inserting new member <BR>";
+        }
+    } catch (PDOException $e) {
+        print "Error!: " . $e->getMessage() . "<br/>";
+        die();
+    }
 
 
-        </div>
-    </div>
-    <!-- footer section goes here-->
+  function uploadImage(){
+    $target_dir = "./tmp/";    
+    $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+    $uploadOk = 1;
+    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
 
-    <div class="navbar fixed-bottom">
-        <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
-            <h3> Developed using following technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap, Javascript.</h3>
-        </div>
-    </div>
+    // Check if image file is a actual image or fake image
+    if(isset($_POST["submit"])) {
+    $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+    if($check !== false) {
+        echo "File is an image - " . $check["mime"] . ".";
+        $uploadOk = 1;
+    } else {
+        echo "File is not an image.";
+        $uploadOk = 0;
+    }
+    }
+
+    // Check if file already exists
+    if (file_exists($target_file)) {
+    echo "Sorry, file already exists.";
+    $uploadOk = 0;
+    }
+
+    // Check file size
+    if ($_FILES["fileToUpload"]["size"] > 500000) {
+    echo "Sorry, your file is too large.";
+    $uploadOk = 0;
+    }
+
+    // Allow certain file formats
+    if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+    && $imageFileType != "gif" ) {
+    echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+    $uploadOk = 0;
+    }
+
+    // Check if $uploadOk is set to 0 by an error
+    if ($uploadOk == 0) {
+    echo "Sorry, your file was not uploaded.";
+    // if everything is ok, try to upload file
+    } else {
+    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+        //echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
+    } else {
+        echo "Sorry, there was an error uploading your file.";
+    }
+    }
+}
+
+function moveImageToDatabase($pname, $plang){
+
+    $source_path = "./tmp/".$_FILES["fileToUpload"]["name"];
+    $target_file = substr(str_replace(" ","",$pname),0,4) . substr($plang,0,4) . $_FILES["fileToUpload"]["name"];
+    $target_path = "./database/images/". $target_file;
+
+    $msg = 'No file: ' .$source_path;
+    if (file_exists($source_path)) {
+        $ok = rename($source_path, $target_path);
+        $msg = 'Failed to rename???';
+       if($ok)
+       {
+          return $target_file;
+       }
+    }
+    echo $msg;
+    return 0;
+}
+
+?>
 
 </body>
 

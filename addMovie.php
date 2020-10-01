@@ -3,48 +3,18 @@
 session_start();
 
 if (isset($_SESSION["uid"])) {
+    echo "UID is set <BR>";
     $uid = $_SESSION["uid"];
+}else {
+    echo "UID not set <BR>";
+}
+if (isset($_SESSION["isadmin"])) {
+    echo "isadmin is true <BR>";
+    $isadmin = TRUE;
 }
 
-if (
-    isset($_POST["login"]) && !empty($_POST["uid"])
-    && !empty($_POST["pwd"])
-) {
-    $uid = $_POST['uid'];
-    $pwd = $_POST['pwd'];
 
-    include './database/config/config.php';
-     //set table name based on local or remote connection
-    if ($connection == "local") {
-        $t_admin = "admin";
-    } else {
-        $t_admin = "$database.admin";
-    }
-
-    try {
-        $db = new PDO("mysql:host=$host", $user, $password, $options);
-        //echo "Database connected successfully <BR>";
-
-        $sql_select = "Select * from $t_admin where admin_username = '$uid' and admin_pwd = '$pwd'";
-
-        $stmt = $db->prepare($sql_select);
-        $stmt->execute();
-
-        if ($rows = $stmt->fetch()) {
-            $_SESSION['valid'] = TRUE;
-            $_SESSION['uid'] = $uid;
-            $_SESSION["pwd"] = $pwd;
-            $_SESSION["isadmin"]=TRUE;
-        } else {
-            echo '<script>alert("Invalid Username or Password. Try again")</script>';
-        }
-    } catch (PDOException $e) {
-        print "Error!: " . $e->getMessage() . "<br/>";
-        die();
-    }
-}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -172,60 +142,110 @@ if (
 
                 </div>
             </div>
-            <!-- Carousel begins here which occupies 10/12 of width -->
 
-            <div class="col-sm-10">
-                <div id="demo" class="carousel slide" data-ride="carousel">
+            <!-- Add Movie Form starts here -->
 
-                    <!-- Indicators -->
-                    <ul class="carousel-indicators">
-                        <li data-target="#demo" data-slide-to="0" class="active"></li>
-                        <li data-target="#demo" data-slide-to="1"></li>
-                    </ul>
-
-                    <!-- The slideshow -->
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
+            <div class="container" style=" width:80% ">
+                <form action="insertMovie.php" method="post" class="was-validated" enctype="multipart/form-data">
+                    <div class="row justify-content-center">
+                        <div class="col">
+                            <div class="form-group">
+                                <label class="font-weight-bold" for="mov_name">Movie Title:</label>
+                                <input type="text" class="form-control" id="mov_name" placeholder="Enter Movie Title"
+                                    name="mov_name" required>
+                                <div class="valid-feedback">Valid.</div>
+                                <div class="invalid-feedback">Please fill out this field.</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="font-weight-bold" for="mov_cast">Movie Cast:</label>
+                                <input type="text" class="form-control" id="mov_cast" placeholder="Enter Cast Details"
+                                    name="mov_cast" required>
+                                <div class="valid-feedback">Valid.</div>
+                                <div class="invalid-feedback">Please fill out this field.</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="font-weight-bold" for="mov_direct">Movie Director:</label>
+                                <input type="text" class="form-control" id="mov_direct"
+                                    placeholder="Enter Director Name" name="mov_direct" required>
+                                <div class="valid-feedback">Valid.</div>
+                                <div class="invalid-feedback">Please fill out this field.</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="font-weight-bold" for="mov_lang">Movie Language:</label> <BR>
+                                <label class="radio-inline"><input type="radio" name="mov_lang"
+                                        value="English">English</label>
+                                <label class="radio-inline"><input type="radio" name="mov_lang"
+                                        value="Hindi">Hindi</label>
+                                <label class="radio-inline"><input type="radio" name="mov_lang"
+                                        value="Kannada">Kannada</label>
+                                <label class="radio-inline"><input type="radio" name="mov_lang"
+                                        value="Malayalam">Malayalam</label>
+                                <label class="radio-inline"><input type="radio" name="mov_lang" value="Tamil"
+                                        checked>Tamil</label>
+                                <label class="radio-inline"><input type="radio" name="mov_lang"
+                                        value="Telugu">Telegu</label>
+                                <label class="radio-inline"><input type="radio" name="mov_lang"
+                                        value="Other">Other</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="font-weight-bold" for="mov_rel_date">Release Date:</label>
+                                <input type="date" class="form-control" placeholder="Select Release Date"
+                                    id="mov_rel_date" name="mov_rel_date" required>
+                                <div class="valid-feedback">Valid.</div>
+                                <div class="invalid-feedback">Please fill out this field.</div>
                             </div>
                         </div>
-                        <div class="carousel-item">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
+                        <div class="col">
+                            <div class="form-group">
+                                <label class="font-weight-bold" for="mov_short_desc">Movie Short Description:</label>
+                                <textarea rows="3" class="form-control-file" id="mov_short_desc" name="mov_short_desc"
+                                    required></textarea>
+                                <div class="valid-feedback">Valid.</div>
+                                <div class="invalid-feedback">Please fill out this field.</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="font-weight-bold" for="fileToUpload">Movie Image:</label>
+                                <input type="file" class="form-control-file" id="fileToUpload"
+                                    accept="image/jpg, image/jpeg, image/png, image/gif" name="fileToUpload" required />
+                                <div class="valid-feedback">Valid.</div>
+                                <div class="invalid-feedback">Please fill out this field.</div>
+                                <div class="ml-2">
+                                    <img src="./tmp/80x80.png" id="preview" class="img-thumbnail">
                                 </div>
                             </div>
+
+                            <input class="form-group bg-primary text-white" type="submit" name="submit"
+                                value="Add Movie">
                         </div>
-                        <!-- Left and right controls -->
-                        <a class="carousel-control-prev" href="#demo" data-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </a>
-                        <a class="carousel-control-next" href="#demo" data-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </a>
                     </div>
-                </div>
+                </form>
             </div>
+        </div><BR>
 
-            <!-- Carousel ends here which occupies 10/12 of width -->
+        <!--  java script to upload image -->
+        <script>
+        // Preview selected image
+        $(document).on("click", ".browse", function() {
+            var file = $(this).parents().find(".file");
+            file.trigger("click");
+        });
+        $('input[type="file"]').change(function(e) {
+            var fileName = e.target.files[0].name;
+            $("#file").val(fileName);
 
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                // get loaded data and render thumbnail.
+                document.getElementById("preview").src = e.target.result;
+            };
+            // read the image file as a data URL.
+            reader.readAsDataURL(this.files[0]);
 
-        </div>
+        });
+        </script>
+        <!-- Add Movie Form ends here-->
+
+    </div>
     </div>
     <!-- footer section goes here-->
 
