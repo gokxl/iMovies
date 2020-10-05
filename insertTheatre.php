@@ -1,57 +1,9 @@
-<?php
-
-session_start();
-
-if (isset($_SESSION["uid"])) {
-    $uid = $_SESSION["uid"];
-}
-
-if (
-    isset($_POST["login"]) && !empty($_POST["uid"])
-    && !empty($_POST["pwd"])
-) {
-    $uid = $_POST['uid'];
-    $pwd = $_POST['pwd'];
-
-    include './database/config/config.php';
-     //set table name based on local or remote connection
-    if ($connection == "local") {
-        $t_admin = "admin";
-    } else {
-        $t_admin = "$database.admin";
-    }
-
-    try {
-        $db = new PDO("mysql:host=$host", $user, $password, $options);
-        //echo "Database connected successfully <BR>";
-
-        $sql_select = "Select * from $t_admin where admin_username = '$uid' and admin_pwd = '$pwd'";
-
-        $stmt = $db->prepare($sql_select);
-        $stmt->execute();
-
-        if ($rows = $stmt->fetch()) {
-            $_SESSION['valid'] = TRUE;
-            $_SESSION['uid'] = $uid;
-            $_SESSION["pwd"] = $pwd;
-            $_SESSION["isadmin"]=TRUE;
-        } else {
-            echo '<script>alert("Invalid Username or Password. Try again")</script>';
-        }
-    } catch (PDOException $e) {
-        print "Error!: " . $e->getMessage() . "<br/>";
-        die();
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>iMovies -  Online Movies Reservation System<</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
@@ -63,10 +15,92 @@ if (
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
-
+    <title>Insert New Movie</title>
 </head>
 
 <body>
+
+    <?php
+
+    session_start();
+
+    if (isset($_SESSION["uid"])) {
+        $uid = $_SESSION["uid"];
+    }
+    if (isset($_SESSION["isadmin"])) {
+        $isadmin = TRUE;
+    }
+    //This will insert rows into both Theatre and Seats table.
+    
+    //Read HTML FORM submitted values using POST Method
+
+    $tName = $_POST['tName'];
+    $tCity = $_POST['tCity'];
+    $seatTypesCount = $_POST['seatTypesCount'];
+
+    //echo "Number of seat types $seatTypesCount <BR>";
+    //echo " Theatre Name $tName <BR>";
+    //echo "City $tCity <BR>";
+   
+    
+    $seatTypes = array(array());
+    for($i=1; $i<=$seatTypesCount; $i++){ 
+            $seatTypes[$i]['sType']=$_POST['sType'.$i];
+            $seatTypes[$i]['sNumbers']=$_POST['sNumbers'.$i];
+            $seatTypes[$i]['sPrice']=$_POST['sPrice'.$i];
+            //echo $i. " Seat Type : ".$seatTypes[$i]['sType']."<BR>";
+            //echo $i. " Number of Seats : ".$seatTypes[$i]['sNumbers']."<BR>";
+            //echo $i. " Price : ".$seatTypes[$i]['sPrice']."<BR>";
+    }
+    
+
+    include './database/config/config.php';
+    if ($connection == "local"){
+        $t_theatre = "theatre";
+        $t_seats = "seats";
+    }else {
+        $t_theatre = "$database.theatre";
+        $t_seats = "$database.seats";
+    }
+
+  
+    try { 
+        $db = new PDO("mysql:host=$host",$user,$password,$options);
+        //echo "Database connected successfully <BR>";
+
+        //insert new row into theatre table
+        $sql_insert = "INSERT INTO $t_theatre (theatre_name, theatre_location) VALUES ('$tName','$tCity')";
+        $stmt = $db->prepare($sql_insert);
+        $rows = $stmt->execute(array());
+       
+        If ($rows>0){   
+            //echo "Theatre added successfully.. <BR>";
+            $sql_theatre_id ="SELECT max(theatre_id) as max_id from $t_theatre";
+            //echo "Select statement is $sql_theatre_id <BR>";
+            $stmt1 = $db->query($sql_theatre_id);
+            $rows1 = $stmt1->fetch();
+            $t_theatre_id = $rows1['max_id'];
+
+            //echo "Theatre ID is $t_theatre_id <BR>";
+            //insert all types of seats into Seats table for the given theatre
+            for($i=1; $i<=$seatTypesCount; $i++){ 
+                $sType = $seatTypes[$i]['sType'];
+                $sNumbers = $seatTypes[$i]['sNumbers'];
+                $sPrice = $seatTypes[$i]['sPrice'];
+                $sql_insert2 = "INSERT INTO $t_seats (seat_theatre_id, seat_type,seats_no_of_seats,seat_price) 
+                    VALUES ($t_theatre_id,'$sType',$sNumbers,$sPrice)";
+                //echo "SQL Statement $sql_insert2 <BR>";
+                $stmt2 = $db->prepare($sql_insert2);
+                $rows2 = $stmt2->execute(array());
+            } 
+        }
+
+    } catch (PDOException $e) {
+        print "Error!: " . $e->getMessage() . "<br/>";
+        die();
+    }
+
+    ?>
 
     <!-- Header section goes here -->
     <div class="container-fluid text-center bg-primary text-white pt-3">
@@ -123,7 +157,7 @@ if (
                         <nav class="navbar bg-light">
                             <ul class="navbar-nav">
                                 <li class="nav-item">
-                                    <a class="nav-link">Basic</a>
+                                    <a class="nav-link">Main</a>
                                     <nav class="navbar bg-light">
                                         <ul class="navbar-nav">
                                             <li class="nav-item">
@@ -136,11 +170,11 @@ if (
                                     </nav>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link">Main</a>
+                                    <a class="nav-link" href="#">Screens</a>
                                     <nav class="navbar bg-light">
                                         <ul class="navbar-nav">
                                             <li class="nav-item">
-                                                <a class="nav-link" href="./addShow.php">Add New Screen</a>
+                                                <a class="nav-link" href="#">Add New Screen</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a class="nav-link" href="#">Manage Screens</a>
@@ -172,68 +206,54 @@ if (
 
                 </div>
             </div>
-            <!-- Carousel begins here which occupies 10/12 of width -->
 
-            <div class="col-sm-10">
-                <div id="demo" class="carousel slide" data-ride="carousel">
+            <div class="container">
+                <h4>Folloing new theatre added successfully..... </h4>
+                <div class="card-group">
+                    <div class="card bg-primary">
 
-                    <!-- Indicators -->
-                    <ul class="carousel-indicators">
-                        <li data-target="#demo" data-slide-to="0" class="active"></li>
-                        <li data-target="#demo" data-slide-to="1"></li>
-                    </ul>
+                        <div class="card-body">
+                            <h3 class="card-title"><?php echo $tName,"(",$tCity,")"; ?></h3>
 
-                    <!-- The slideshow -->
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
+                            <div class="container">
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-sm-4">Seat Type</th>
+                                            <th class="col-sm-4">Number of Seats</th>
+                                            <th class="col-sm-4">Rate / Price </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                            for($i=1; $i<=$seatTypesCount; $i++){ 
+                                                $sType = $seatTypes[$i]['sType'];
+                                                $sNumbers = $seatTypes[$i]['sNumbers'];
+                                                $sPrice = $seatTypes[$i]['sPrice'];
+                                                
+                                                echo "<tr><td>$sType</td>";
+                                                echo "<td>$sNumbers</td>";
+                                                echo "<td>$$sPrice</td></tr>";
+                                            }
+                                        ?>
+                                    </tbody>
+                                </table>
                             </div>
+
                         </div>
-                        <div class="carousel-item">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Left and right controls -->
-                        <a class="carousel-control-prev" href="#demo" data-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </a>
-                        <a class="carousel-control-next" href="#demo" data-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </a>
                     </div>
+
+                </div>
+            </div> <BR>
+
+            <!-- footer section goes here-->
+
+            <div class="navbar fixed-bottom">
+                <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
+                    <h3> Developed using following technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap,
+                        Javascript.</h3>
                 </div>
             </div>
-
-            <!-- Carousel ends here which occupies 10/12 of width -->
-
-
-        </div>
-    </div>
-    <!-- footer section goes here-->
-
-    <div class="navbar fixed-bottom">
-        <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
-            <h3> Developed using following technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap, Javascript.</h3>
-        </div>
-    </div>
 
 </body>
 
