@@ -207,7 +207,7 @@
             <!-- Add Show Form starts here -->
 
             <div class="container" style=" width:80% ">
-                <form action="insertShow.php" method="post" enctype="multipart/form-data">
+                <form action="manageShow2.php" method="post" enctype="multipart/form-data">
                     <div class="row justify-content-center">
                         <div class="col sm-6">
                             <label class="font-weight-bold" for="citiesSelect">Select City:</label>
@@ -220,74 +220,10 @@
                             </select>
                         </div>
                     </div><BR>
-                    <div class="row justify-content-center">
-                        <div class="col sm-6">
-                            <label class="font-weight-bold" for="tMovie">Select Movie:</label>
-                            <select class="form-control" id="tMovie" name="tMovie">
-                                <?php
-                    foreach($db->query("SELECT movie_id, movie_title, movie_language from $t_movies") as $rs3){
-                        echo  "<option value=" . $rs3['movie_id'] . ">" . $rs3['movie_title'] . "(" . $rs3['movie_language'] . ")</option>";
-            
-                    }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="col sm-6">
-                            <label class="font-weight-bold" for="tStatus">Select Status:</label>
-                            <select class="form-control" id="tStatus" name="tStatus">
-                                <option value="Upcoming">Upcoming</option>
-                                <option value="Running" selected>Running</option>
-                                <option value="Closed">Closed</option>
-
-                            </select>
-                        </div>
-                    </div><BR>
-                    <div class="row justify-content-center">
-                        <div class="col sm-6">
-                            <label class="font-weight-bold" for="tStartdate">Select Start Date:</label>
-                            <input type="date" class="form-control" placeholder="Start Date" id="tStartdate"
-                                name="tStartdate" required>
-                            </select>
-                        </div>
-                        <div class="col sm-6">
-                            <label class="font-weight-bold" for="tEnddate">Select End Date:</label>
-                            <input type="date" class="form-control" placeholder="End Date" id="tEnddate" name="tEnddate"
-                                required>
-                            </select>
-                        </div>
-                    </div><BR>
-                    <div class="row justify-content-center">
-                        <h6>Select Slot(s) for screening: </h6>
-                        <div class="form-check-inline">
-                            <label class="form-check-label" for="tSlots">
-                                <input type="checkbox" class="form-check-input" id="tSlotss" name="tSlots[]"
-                                    value="morning" >Morning
-                            </label>
-                        </div>
-                        <div class="form-check-inline">
-                            <label class="form-check-label" for="tSlots">
-                                <input type="checkbox" class="form-check-input" id="tSlots" name="tSlots[]"
-                                    value="matinee" >Matinee
-                            </label>
-                        </div>
-                        <div class="form-check-inline">
-                            <label class="form-check-label" for="tSlots">
-                                <input type="checkbox" class="form-check-input" id="tSlots" name="tSlots[]"
-                                    value="evening" checked>Evening
-                            </label>
-                        </div>
-                        <div class="form-check-inline">
-                            <label class="form-check-label" for="tSlots">
-                                <input type="checkbox" class="form-check-input" id="tSlots" name="tSlots[]"
-                                    value="night" checked>Night
-                            </label>
-                        </div>
-                    </div><BR>
                     <div class="row justify-content-center ">
-                        <input class="form-group bg-primary text-white" type="submit" name="CreateShow"
-                            value="Create Show & Show Inventory" />
+                        <input class="form-group bg-primary text-white" type="submit" name="manageShowStep2"
+                            value="Click to proceed" />
                     </div>
-                    <input type="hidden" class="form-control" name="seatTypesCount" id="seatTypesCount">
                 </form>
 
 

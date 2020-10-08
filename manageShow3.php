@@ -12,13 +12,9 @@ if (isset($_SESSION["isadmin"])) {
 //Read HTML FORM submitted values using POST Method
 //echo "Entering insertShow <BR>";
 
-$showCity = $_POST['citiesSelect'];
-$showTheatre = $_POST['theatresSelect'];
-$showMovie = $_POST['tMovie'];
-$showStatus = $_POST['tStatus'];
-$showStartDate = $_POST['tStartdate'];
-$showEndDate = $_POST['tEnddate'];
-$showSlots = $_POST['tSlots'];  //Array of values
+$theatreID = $_POST['theatreID'];
+$tCity = $_POST['tCity'];
+$tMovieID = $_POST['tMovie'];
 
 //echo $showCity . " - " . $showTheatre . " - " . $showStatus . " - " . $showStartDate . " - " . $showEndDate . "<BR>";
 
@@ -38,23 +34,37 @@ if ($connection == "local"){
 }
 
 // Prepare start and end date of show for scheduling
-$begin = new DateTime($showStartDate);
-$end = new DateTime($showEndDate);
-$end = $end->modify( '+1 day' ); //1 day added for daterange to cover end date
-$interval = new DateInterval('P1D');
-$daterange = new DatePeriod($begin, $interval, $end);
+//$begin = new DateTime($showStartDate);
+//$end = new DateTime($showEndDate);
+//$end = $end->modify( '+1 day' ); //1 day added for daterange to cover end date
+//$interval = new DateInterval('P1D');
+//$daterange = new DatePeriod($begin, $interval, $end);
 
 //test date range
 /* foreach($daterange as $date) {
     echo $date->format('Y-m-d')."<br />";
 } */
 
-$show_conflict=FALSE;
+//$show_conflict=FALSE;
 
 try { 
     $db = new PDO("mysql:host=$host",$user,$password,$options);
+
+    $i=1;
+
+    foreach($db->query("select show_id, show_date, show_slot, show_status from $t_shows 
+        where show_theatre_id = $theatreID and show_movie_id=$tMovieID") as $rs1){
+        
+        $showTable[$i]['show_id']=$rs1['show_id'];
+        $showTable[$i]['show_date']=$rs1['show_date'];
+        $showTable[$i]['show_slot']=$rs1['show_slot'];
+        $showTable[$i]['show_status']=$rs1['show_status'];
+        $i++;
+    }
+
     //echo "Database connected successfully <BR>";
 
+    /*
     //Check for free slots. Combination of theatre, date and slot can't be duplicate
     $n = count($showSlots);
     //echo "Conflicting show schedules <BR>";
@@ -139,8 +149,8 @@ try {
                 }
 
             }
-        }
-    } 
+        } 
+    } */
 
 } catch (PDOException $e) {
     print "Error!: " . $e->getMessage() . "<br/>";
@@ -224,7 +234,7 @@ try {
 
                         <!-- left side nvertical navigation bar starts here -->
 
-                        
+
                         <nav class="navbar bg-light">
                             <ul class="navbar-nav">
                                 <li class="nav-item">
@@ -261,7 +271,8 @@ try {
                                                 <a class="nav-link" href="./ticketsShow.php">Tickets by Show</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="./collectionTheatre.php">Collection by Theatre</a>
+                                                <a class="nav-link" href="./collectionTheatre.php">Collection by
+                                                    Theatre</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a class="nav-link" href="./collectionMovie.php">Collection by Movie</a>
@@ -281,70 +292,57 @@ try {
                 </div>
             </div>
 
-            <div class="container">
-                <?php if(!$show_conflict) { ?>
-                <h4>Success: Following movie shows scheduled successfully.... </h4>
-                <?php } else { ?>
-                <h4>Conflicts: Following conflicts should be avoided..... </h4>
-                <?php } ?>
+            <div class="container" style=" width:80% ">
+                <form action="manageShow4.php" method="post" enctype="multipart/form-data">
+                    <div class="row justify-content-center">
+                        <div class="col sm-6">
+                            <label class="font-weight-bold">Selected Theatre:</label>
+                            <input type="text" class="form-control" id="theatreID" name="theatreID"
+                                value=<?php echo
+                            ($db->query("Select theatre_name from $t_theatre where theatre_id=$theatreID"))->fetch()['theatre_name'] ?> disabled></input>
+                        </div>
+                        div class="col sm-6">
+                        <label class="font-weight-bold">Selected Movie:</label>
+                        <input type="text" class="form-control" id="movieID" name="movieID"
+                            value=<?php echo
+                            ($db->query("Select movie_title from $t_movie where movie_id=$tMovieID"))->fetch()['movie_title'] ?> disabled></input>
+                    </div>
+            </div><BR>
 
-                <div class="container-fluid">
-                    <?php  if($show_conflict){  ?>
-                    <table class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th class="col-sm-3">Theatre</th>
-                                <th class="col-sm-2">City</th>
-                                <th class="col-sm-3">Movie </th>
-                                <th class="col-sm-1">Date </th>
-                                <th class="col-sm-2">Slot </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                                
-                                for($i=1; $i <= $conflictRows; $i++){
-                                    echo "<tr><td>". $conflictShow[$i]['theatre_name'] . "</td>";
-                                    echo "<td>" . $conflictShow[$i]['theatre_location'] . "</td>";
-                                    echo "<td>" . $conflictShow[$i]['movie_title'] . "</td>";
-                                    echo "<td>" . $conflictShow[$i]['show_date'] . "</td>";
-                                    echo "<td>" . $conflictShow[$i]['show_slot'] . "</td></tr>";
+
+            <div class="container-fluid">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="col-sm-3">Show_ID</th>
+                            <th class="col-sm-3">Show_Date</th>
+                            <th class="col-sm-3">Show_Slot </th>
+                            <th class="col-sm-3">Show_Status </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php     
+                                for($i=1; $i <= count($showTable); $i++){
+                                    echo "<tr><td>". $showTable[$i]['show_id'] . "</td>";
+                                    echo "<td>". $showTable[$i]['show_date'] . "</td>";
+                                    echo "<td>" . $showTable[$i]['show_slot'] . "</td>";
+                                    echo "<td>" . $showTable[$i]['show_status'] . "</td></tr>";
                                 }
-                            }  else { 
-                                    echo "<table class='table table-striped table-bordered'>";
-                                    echo "<tr><th>Movie Title</th>";
-                                    echo "<td>" . ($db->query("Select movie_title from $t_movies where movie_id=$showMovie"))->fetch()['movie_title'] . "</td></tr>";
-                                    echo "<tr><th>Theatre</th>";
-                                    echo "<td>" . ($db->query("Select theatre_name from $t_theatre where theatre_id=$showTheatre"))->fetch()['theatre_name'] . "</td></tr>";
-                                    echo "<tr><th>City</th>";
-                                    echo "<td>" . $showCity . "</td></tr>";
-                                    echo "<tr><th>Start Date</th>";
-                                    echo "<td>" . $showStartDate . "</td></tr>";
-                                    echo "<tr><th>End Date</th>";
-                                    echo "<td>" . $showEndDate . "</td></tr>";
-                                    echo "<tr><th>Show Slots</th>";
-                                    echo "<td>";
-                                    for($i=0; $i < $n; $i++){
-                                        echo $showSlots[$i] . " ";
-                                    }
-                                    echo "</td></tr>";
-                                    
-                            }
                             ?>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div> <BR>
-
-            <!-- footer section goes here-->
-
-            <div class="navbar fixed-bottom">
-                <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
-                    <h3> Developed using following technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap,
-                        Javascript.</h3>
-                </div>
+                    </tbody>
+                </table>
             </div>
+
+        </div> <BR>
+
+        <!-- footer section goes here-->
+
+        <div class="navbar fixed-bottom">
+            <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
+                <h3> Developed using following technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap,
+                    Javascript.</h3>
+            </div>
+        </div>
 
 </body>
 

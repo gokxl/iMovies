@@ -13,15 +13,20 @@
         $isadmin = TRUE;
     }
 
+    $showCity = $_POST['citiesSelect'];
+    $showTheatre = $_POST['theatresSelect'];
+
     include './database/config/config.php';
     if ($connection == "local"){
         $t_theatre = "theatre";
         $t_seats = "seats";
         $t_movies = "movies";
+        $t_shows = "shows";
     }else {
         $t_theatre = "$database.theatre";
         $t_seats = "$database.seats";
         $t_movies = "$database.movies";
+        $t_shows = "$database.shows";
     }
 
     try { 
@@ -207,88 +212,41 @@
             <!-- Add Show Form starts here -->
 
             <div class="container" style=" width:80% ">
-                <form action="insertShow.php" method="post" enctype="multipart/form-data">
+            <form action="manageShow3.php" method="post" enctype="multipart/form-data">
                     <div class="row justify-content-center">
                         <div class="col sm-6">
-                            <label class="font-weight-bold" for="citiesSelect">Select City:</label>
-                            <select class="form-control" id="citiesSelect" name="citiesSelect">
-                            </select>
+                            <label class="font-weight-bold" >Selected Theatre:</label>
+                            <input type="text" class="form-control" id="theatreID" name="theatreID"
+                                value=<?php echo
+                            ($db->query("Select theatre_name from $t_theatre where theatre_id=$showTheatre"))->fetch()['theatre_name'] ?>
+                            disabled></input>
                         </div>
                         <div class="col sm-6">
-                            <label class="font-weight-bold" for="theatresSelect">Select Theatre:</label>
-                            <select class="form-control" id="theatresSelect" name="theatresSelect">
-                            </select>
+                            <label class="font-weight-bold" >Selected City:</label>
+                            <input type="text" class="form-control" id="tCity" name="tCity"
+                                value=<?php echo $showCity ?> disabled></input>
                         </div>
                     </div><BR>
-                    <div class="row justify-content-center">
-                        <div class="col sm-6">
+                   
+                    <div class="row justify-content-center" >
+        
                             <label class="font-weight-bold" for="tMovie">Select Movie:</label>
                             <select class="form-control" id="tMovie" name="tMovie">
-                                <?php
-                    foreach($db->query("SELECT movie_id, movie_title, movie_language from $t_movies") as $rs3){
+                                <?php  
+                                
+                    foreach($db->query("SELECT distinct a.movie_id, a.movie_title, a.movie_language from $t_movies a, $t_shows b where 
+                                        a.movie_id = b.show_movie_id and  b.show_theatre_id = $showTheatre") as $rs3){
                         echo  "<option value=" . $rs3['movie_id'] . ">" . $rs3['movie_title'] . "(" . $rs3['movie_language'] . ")</option>";
             
                     }
                                 ?>
                             </select>
-                        </div>
-                        <div class="col sm-6">
-                            <label class="font-weight-bold" for="tStatus">Select Status:</label>
-                            <select class="form-control" id="tStatus" name="tStatus">
-                                <option value="Upcoming">Upcoming</option>
-                                <option value="Running" selected>Running</option>
-                                <option value="Closed">Closed</option>
-
-                            </select>
-                        </div>
-                    </div><BR>
-                    <div class="row justify-content-center">
-                        <div class="col sm-6">
-                            <label class="font-weight-bold" for="tStartdate">Select Start Date:</label>
-                            <input type="date" class="form-control" placeholder="Start Date" id="tStartdate"
-                                name="tStartdate" required>
-                            </select>
-                        </div>
-                        <div class="col sm-6">
-                            <label class="font-weight-bold" for="tEnddate">Select End Date:</label>
-                            <input type="date" class="form-control" placeholder="End Date" id="tEnddate" name="tEnddate"
-                                required>
-                            </select>
-                        </div>
-                    </div><BR>
-                    <div class="row justify-content-center">
-                        <h6>Select Slot(s) for screening: </h6>
-                        <div class="form-check-inline">
-                            <label class="form-check-label" for="tSlots">
-                                <input type="checkbox" class="form-check-input" id="tSlotss" name="tSlots[]"
-                                    value="morning" >Morning
-                            </label>
-                        </div>
-                        <div class="form-check-inline">
-                            <label class="form-check-label" for="tSlots">
-                                <input type="checkbox" class="form-check-input" id="tSlots" name="tSlots[]"
-                                    value="matinee" >Matinee
-                            </label>
-                        </div>
-                        <div class="form-check-inline">
-                            <label class="form-check-label" for="tSlots">
-                                <input type="checkbox" class="form-check-input" id="tSlots" name="tSlots[]"
-                                    value="evening" checked>Evening
-                            </label>
-                        </div>
-                        <div class="form-check-inline">
-                            <label class="form-check-label" for="tSlots">
-                                <input type="checkbox" class="form-check-input" id="tSlots" name="tSlots[]"
-                                    value="night" checked>Night
-                            </label>
-                        </div>
                     </div><BR>
                     <div class="row justify-content-center ">
-                        <input class="form-group bg-primary text-white" type="submit" name="CreateShow"
-                            value="Create Show & Show Inventory" />
+                        <input class="form-group bg-primary text-white" type="submit" name="manageStep3"
+                            value="Click to proceed" />
                     </div>
-                    <input type="hidden" class="form-control" name="seatTypesCount" id="seatTypesCount">
-                </form>
+                    </form>
 
 
 
