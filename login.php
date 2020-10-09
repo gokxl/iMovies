@@ -214,7 +214,7 @@ if (isset($_SESSION["uid"])) {
         </div>
 
         <script language="Javascript">
-        <!--
+        
         function loginSubmit() {
             const cb = document.getElementById('isadmin');
             if(cb.checked == true){
@@ -225,7 +225,7 @@ if (isset($_SESSION["uid"])) {
             document.loginForm.submit(); // Submit the page
             return true;
         }
-        -->
+    
         </script>
 
 </body>
