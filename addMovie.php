@@ -93,40 +93,44 @@ if (isset($_SESSION["isadmin"])) {
                         <nav class="navbar bg-light">
                             <ul class="navbar-nav">
                                 <li class="nav-item">
-                                    <a class="nav-link">Movies</a>
+                                    <a class="nav-link">Basic</a>
                                     <nav class="navbar bg-light">
                                         <ul class="navbar-nav">
                                             <li class="nav-item">
-                                                <a class="nav-link" href="./addMovie.php">Add New Movie</a>
+                                                <a class="nav-link" href="./addMovie.php">Add Movie</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="#">Manage Movies</a>
+                                                <a class="nav-link" href="./addTheatre.php">Add Theatre / Seats</a>
                                             </li>
                                         </ul>
                                     </nav>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Screens</a>
+                                    <a class="nav-link">Main</a>
                                     <nav class="navbar bg-light">
                                         <ul class="navbar-nav">
                                             <li class="nav-item">
-                                                <a class="nav-link" href="#">Add New Screen</a>
+                                                <a class="nav-link" href="./addShow.php">Add Show / Inventory</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="#">Manage Screens</a>
+                                                <a class="nav-link" href="./manageShow.php">Manage Shows</a>
                                             </li>
                                         </ul>
                                     </nav>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Shows</a>
+                                    <a class="nav-link">Report</a>
                                     <nav class="navbar bg-light">
                                         <ul class="navbar-nav">
                                             <li class="nav-item">
-                                                <a class="nav-link" href="#">Add New Shows</a>
+                                                <a class="nav-link" href="./ticketsShow.php">Tickets by Show</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="#">Manage Shows</a>
+                                                <a class="nav-link" href="./collectionTheatre.php">Collection by
+                                                    Theatre</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="./collectionMovie.php">Collection by Movie</a>
                                             </li>
                                         </ul>
                                     </nav>

@@ -152,7 +152,7 @@
                 <div class="container ">
                     <div class="row">
                         <!-- left side nvertical navigation bar starts here -->
-                                                
+
                         <nav class="navbar bg-light">
                             <ul class="navbar-nav">
                                 <li class="nav-item">
@@ -189,7 +189,8 @@
                                                 <a class="nav-link" href="./ticketsShow.php">Tickets by Show</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="./collectionTheatre.php">Collection by Theatre</a>
+                                                <a class="nav-link" href="./collectionTheatre.php">Collection by
+                                                    Theatre</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a class="nav-link" href="./collectionMovie.php">Collection by Movie</a>
@@ -202,7 +203,7 @@
                                 </li>
                             </ul>
                         </nav>
-                        
+
                         <!-- left side nvertical navigation bar ends here -->
 
                     </div>
@@ -212,27 +213,26 @@
             <!-- Add Show Form starts here -->
 
             <div class="container" style=" width:80% ">
-            <form action="manageShow3.php" method="post" enctype="multipart/form-data">
+                <form action="manageShow3.php" method="post" enctype="multipart/form-data">
                     <div class="row justify-content-center">
                         <div class="col sm-6">
-                            <label class="font-weight-bold" >Selected Theatre:</label>
-                            <input type="text" class="form-control" id="theatreID" name="theatreID"
-                                value=<?php echo
-                            ($db->query("Select theatre_name from $t_theatre where theatre_id=$showTheatre"))->fetch()['theatre_name'] ?>
-                            disabled></input>
+                            <label class="font-weight-bold">Selected Theatre:</label>
+                            <input type="text" class="form-control" id="theatre" name="theatre"
+                                value=<?php echo '"'.
+                            ($db->query("Select theatre_name from $t_theatre where theatre_id=$showTheatre"))->fetch()['theatre_name'] . '"'?> disabled></input>
                         </div>
                         <div class="col sm-6">
-                            <label class="font-weight-bold" >Selected City:</label>
+                            <label class="font-weight-bold">Selected City:</label>
                             <input type="text" class="form-control" id="tCity" name="tCity"
-                                value=<?php echo $showCity ?> disabled></input>
+                                value=<?php echo '"' . $showCity . '"' ?> disabled></input>
                         </div>
                     </div><BR>
-                   
-                    <div class="row justify-content-center" >
-        
-                            <label class="font-weight-bold" for="tMovie">Select Movie:</label>
-                            <select class="form-control" id="tMovie" name="tMovie">
-                                <?php  
+
+                    <div class="row justify-content-center">
+
+                        <label class="font-weight-bold" for="tMovie">Select Movie:</label>
+                        <select class="form-control" id="tMovie" name="tMovie">
+                            <?php  
                                 
                     foreach($db->query("SELECT distinct a.movie_id, a.movie_title, a.movie_language from $t_movies a, $t_shows b where 
                                         a.movie_id = b.show_movie_id and  b.show_theatre_id = $showTheatre") as $rs3){
@@ -240,13 +240,14 @@
             
                     }
                                 ?>
-                            </select>
+                        </select>
                     </div><BR>
                     <div class="row justify-content-center ">
                         <input class="form-group bg-primary text-white" type="submit" name="manageStep3"
                             value="Click to proceed" />
                     </div>
-                    </form>
+                    <input type="hidden" class="form-control" name="theatreID" id="theatreID" value=<?php echo $showTheatre ?> />
+                </form>
 
 
 

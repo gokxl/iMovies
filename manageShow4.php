@@ -10,14 +10,19 @@ if (isset($_SESSION["isadmin"])) {
 }
 
 //Read HTML FORM submitted values using POST Method
-//echo "Entering insertShow <BR>";
+echo "Entering managesshow final step <BR>";
 
 $theatreID = $_POST['theatreID'];
-$tCity = $_POST['tCity'];
-$tMovieID = $_POST['tMovie'];
+$movieID = $_POST['movieID'];
+$showTable = $_POST['closeShow'];
 
-//echo "Theatre ID $theatreID <BR>";
-//echo "movie ID $tMovieID <BR>";
+echo "Theatre ID $theatreID <BR>";
+echo "movie ID $tMovieID <BR>";
+
+$n = count($showTable);
+for($i=0;$i<$n;$i++){
+    echo "Show ID: $showTable[$i] <BR>";
+}
 
 //echo $showCity . " - " . $showTheatre . " - " . $showStatus . " - " . $showStartDate . " - " . $showEndDate . "<BR>";
 
