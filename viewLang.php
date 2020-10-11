@@ -6,43 +6,17 @@ if (isset($_SESSION["uid"])) {
     $uid = $_SESSION["uid"];
 }
 
-if (
-    isset($_POST["login"]) && !empty($_POST["uid"])
-    && !empty($_POST["pwd"])
-) {
 
-    $uid = $_POST['uid'];
-    $pwd = $_POST['pwd'];
-
-    include './database/config/config.php';
-    //set table name based on local or remote connection
-    if ($connection == "local") {
-        $t_customer = "customer";
-    } else {
-        $t_customer = "$database.customer";
-    }
-
-    try {
-        $db = new PDO("mysql:host=$host", $user, $password, $options);
-
-        $sql_select = "Select * from $t_customer where cust_username =  '$uid' and cust_pwd = '$pwd'";
-        //echo "SQL Statement is : $sql_select <BR>";
-
-        $stmt = $db->prepare($sql_select);
-        $stmt->execute();
-
-        if ($rows = $stmt->fetch()) {
-            $_SESSION['valid'] = TRUE;
-            $_SESSION['uid'] = $_POST["uid"];
-            $_SESSION["pwd"] = $_POST["pwd"];
-        } else {
-            echo '<script>alert("Invalid Username or Password. Try again")</script>';
-        }
-    } catch (PDOException $e) {
-        print "Error!: " . $e->getMessage() . "<br/>";
-        die();
-    }
+include './database/config/config.php';
+//set table name based on local or remote connection
+if ($connection == "local") {
+    $t_customer = "customer";
+    
+} else {
+    $t_customer = "$database.customer";
+    $t_Movies = "$database.Movies";  
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -150,68 +124,38 @@ if (
 
                 </div>
             </div>
-            <!-- Carousel begins here which occupies 10/12 of width -->
+            <!-----content add -->
+            <div class="container" style="margin-top:20px">
+                <div class="row">
 
-            <div class="col-sm-10">
-                <div id="demo" class="carousel slide" data-ride="carousel">
-
-                    <!-- Indicators -->
-                    <ul class="carousel-indicators">
-                        <li data-target="#demo" data-slide-to="0" class="active"></li>
-                        <li data-target="#demo" data-slide-to="1"></li>
-                    </ul>
-
-                    <!-- The slideshow -->
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                            </div>
+                    <form action="viewLang2.php" method="post" class="was-validated" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label class="font-weight-bold" for="mov_lang">Movie Language:</label> <BR>
+                            <label class="radio-inline"><input type="radio" name="mov_lang" value="English">English</label>
+                            <label class="radio-inline"><input type="radio" name="mov_lang" value="Hindi">Hindi</label>
+                            <label class="radio-inline"><input type="radio" name="mov_lang" value="Kannada">Kannada</label>
+                            <label class="radio-inline"><input type="radio" name="mov_lang" value="Malayalam">Malayalam</label>
+                            <label class="radio-inline"><input type="radio" name="mov_lang" value="Tamil" checked>Tamil</label>
+                            <label class="radio-inline"><input type="radio" name="mov_lang" value="Telugu">Telegu</label>
+                            <label class="radio-inline"><input type="radio" name="mov_lang" value="Other">Other</label>
                         </div>
-                        <div class="carousel-item">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Left and right controls -->
-                        <a class="carousel-control-prev" href="#demo" data-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </a>
-                        <a class="carousel-control-next" href="#demo" data-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </a>
-                    </div>
+
+                        <input class="form-group bg-primary text-white" type="submit" name="submit" value="View Movies">
+                    </form>
+
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-sm-2"></div>
+
+                    <img src="./img/viewpageImage2.jpg" alt="searchGuy">
                 </div>
             </div>
-
-            <!-- Carousel ends here which occupies 10/12 of width -->
-
-
-        </div>
-    </div>
-    <!-- footer section goes here-->
-
-    <div class="navbar fixed-bottom">
-        <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
-            <h3> Developed using following technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap, Javascript.</h3>
-        </div>
-    </div>
+            <div class="navbar fixed-bottom">
+                <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
+                    <h3> Developed using following technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap, Javascript.</h3>
+                </div>
+            </div>
 
 </body>
 
