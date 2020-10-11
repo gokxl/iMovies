@@ -1,47 +1,50 @@
 <?php
 
+session_start();
+
 if (isset($_SESSION["uid"])) {
     $uid = $_SESSION["uid"];
 }
 
-if (
-    isset($_POST["login"]) && !empty($_POST["uid"])
-    && !empty($_POST["pwd"])
-) {
+$chosenLang = $_POST['mov_lang'];
+echo "chosen language is $chosenLang<br>";
 
-    $uid = $_POST['uid'];
-    $pwd = $_POST['pwd'];
-
-    include './database/config/config.php';
-    //set table name based on local or remote connection
-    if ($connection == "local") {
-        $t_customer = "customer";
-    } else {
-        $t_customer = "$database.customer";
-    }
-
-    try {
-        $db = new PDO("mysql:host=$host", $user, $password, $options);
-
-        $sql_select = "Select * from $t_customer where cust_username =  '$uid' and cust_pwd = '$pwd'";
-        //echo "SQL Statement is : $sql_select <BR>";
-
-        $stmt = $db->prepare($sql_select);
-        $stmt->execute();
-
-        if ($rows = $stmt->fetch()) {
-            $_SESSION['valid'] = TRUE;
-            $_SESSION['uid'] = $_POST["uid"];
-            $_SESSION["pwd"] = $_POST["pwd"];
-        } else {
-            echo '<script>alert("Invalid Username or Password. Try again")</script>';
-        }
-    } catch (PDOException $e) {
-        print "Error!: " . $e->getMessage() . "<br/>";
-        die();
-    }
+include './database/config/config.php';
+//set table name based on local or remote connection
+if ($connection == "local") {
+    $t_customer = "customer";
+    $t_Movies = "movies";
+} else {
+    $t_customer = "$database.customer";
+    $t_Movies = "$database.movies";
 }
+
+
+try {
+    $db = new PDO("mysql:host=$host", $user, $password, $options);
+
+    $i = 1;
+    foreach ($db->query("select movie_id, movie_title,movie_language,movie_cast,movie_description,movie_image_fn 
+            from $t_Movies where movie_language = '$chosenLang'") as $rs1) {
+        echo 'movie title is: ' . $rs1['movie_title'] . "<BR>";
+
+        $movieTable[$i]['movie_id'] = $rs1['movie_id']; 
+        $movieTable[$i]['movie_title'] = $rs1['movie_title'];
+        $movieTable[$i]['movie_language'] = $rs1['movie_language'];
+        $movieTable[$i]['movie_cast'] = $rs1['movie_cast'];
+        $movieTable[$i]['movie_description'] = $rs1['movie_description'];
+        $movieTable[$i]['movie_image_fn'] = $rs1['movie_image_fn'];
+
+        echo "the select movie names are" .  $movieTable[$i]['movie_title'] . " - " .      $movieTable[$i]['movie_cast'] . " <br>";
+        $i++;
+    }
+} catch (PDOException $e) {
+    print "Error!: " . $e->getMessage() . "<br/>";
+    die();
+}
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -148,59 +151,65 @@ if (
 
                 </div>
             </div>
-            <!-- Carousel begins here which occupies 10/12 of width -->
+            <!-- content add -->
+            <div class="container my-3" style="margin-top:30px">
 
-            <div class="col-sm-10">
-                <div id="demo" class="carousel slide" data-ride="carousel">
+                <?php
+                $number_of_cards = 0;         //Track to display 4 cards per row
+                $row_count = $db->query("SELECT count(*) from $t_Movies")->fetchColumn();
+                $number_of_rows = 0;
+                $number_of_movies = 0;
 
-                    <!-- Indicators -->
-                    <ul class="carousel-indicators">
-                        <li data-target="#demo" data-slide-to="0" class="active"></li>
-                        <li data-target="#demo" data-slide-to="1"></li>
-                    </ul>
+                for ($i = 1; $i <= count($movieTable); $i++) {
 
-                    <!-- The slideshow -->
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
+                    if ($number_of_cards == 0) {     //3 cards per row  
+                ?>
+                        <div class="card-deck">
+                        <?php }
+                    if (($number_of_rows % 2) == 0) {
+                        if (($number_of_cards % 2) == 0) {
+                            $bg = "bg-primary";
+                            $btn = "btn-warning";
+                        } else {
+                            $bg = "bg-warning";
+                            $btn = "btn-primary";
+                        }
+                    } else {
+                        if (($number_of_cards % 2) == 1) {
+                            $bg = "bg-primary";
+                            $btn = "btn-warning";
+                        } else {
+                            $bg = "bg-warning";
+                            $btn = "btn-primary";
+                        }
+                    } ?>
+
+                        <div class="card <?php echo $bg; ?>" style="max-width:18rem">
+                            <img class="card-img-top rounded-circle" src="./database/images/<?php echo $movieTable[$i]['movie_img_fn']; ?>" alt="Card image" style="width:100%">
+                            <div class="card-body">
+                                <h4 class="card-title"> <?php echo $movieTable[$i]['movie_title'], "(", $movieTable[$i]['movie_language'], ")"; ?></h4>
+                                <p class="card-text"> <?php echo $movieTable[$i]['movie_cast']; ?> </p>
+                                <p class="card-text small"> <?php echo $movieTable[$i]['movie_description']; ?> </p>
+
+                            </div>
+                            <div class="card-footer">
+                                <a href="./movieshow.php?p_movie_id=<?php echo $movieTable[$i]['movie_id']; ?>" class="btn <?php echo $btn; ?>">More Details</a>
                             </div>
                         </div>
-                        <div class="carousel-item">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Left and right controls -->
-                        <a class="carousel-control-prev" href="#demo" data-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </a>
-                        <a class="carousel-control-next" href="#demo" data-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </a>
-                    </div>
-                </div>
+
+                        <?php
+                        $number_of_cards++;
+                        $number_of_movies++;
+                        if (($number_of_cards == 4) or ($number_of_movies == $row_count)) {  ?>
+                        </div> <BR>
+                <?php
+                            $number_of_cards = 0;
+                            $number_of_rows++;
+                        }
+                    }
+                ?>
+
             </div>
-
-            <!-- Carousel ends here which occupies 10/12 of width -->
-
-
         </div>
     </div>
     <!-- footer section goes here-->
