@@ -172,7 +172,7 @@
             </div>
 
             <div class="container">
-                <h4>Folloing new movie added successfully..... </h4>
+                <h4>Following new movie added successfully..... </h4>
                 <div class="card-group">
                     <div class="card bg-primary" style="width:200px">
 

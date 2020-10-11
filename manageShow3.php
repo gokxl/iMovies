@@ -56,7 +56,7 @@ try {
     $i=1;
 
     foreach($db->query("select show_id, show_date, show_slot, show_status from $t_shows 
-        where show_theatre_id = $theatreID and show_movie_id=$tMovieID") as $rs1){
+        where show_theatre_id = $theatreID and show_movie_id=$tMovieID and show_status <> 'closed'") as $rs1){
         
         $showTable[$i]['show_id']=$rs1['show_id'];
         $showTable[$i]['show_date']=$rs1['show_date'];
@@ -297,18 +297,20 @@ try {
 
             <div class="container" style=" width:80% ">
                 <form action="manageShow4.php" method="post" enctype="multipart/form-data">
+                <input type="hidden" class="form-control" id="theatreID" name="theatreID" value=<?php echo $theatreID; ?> />
+                <input type="hidden" class="form-control" id="movieID" name="movieID" value=<?php echo $tMovieID; ?> />
                     <div class="row justify-content-center">
                         <div class="col sm-6">
                             <label class="font-weight-bold">Selected Theatre:</label>
-                            <input type="text" class="form-control" id="theatreID" name="theatreID"
-                                value=<?php echo
-                            ($db->query("Select theatre_name from $t_theatre where theatre_id=$theatreID"))->fetch()['theatre_name'] ?> disabled></input>
+                            <input type="text" readonly class="form-control" id="tName" name="tName"
+                                value=<?php echo "'" . 
+                            ($db->query("Select theatre_name from $t_theatre where theatre_id=$theatreID"))->fetch()['theatre_name'] . "'" ?> />
                         </div>
                         <div class="col sm-6">
                             <label class="font-weight-bold">Selected Movie:</label>
-                            <input type="text" class="form-control" id="movieID" name="movieID"
-                                value=<?php echo
-                            ($db->query("Select movie_title from $t_movies where movie_id=$tMovieID"))->fetch()['movie_title'] ?> disabled></input>
+                            <input type="text" readonly class="form-control" id="movieName" name="movieName"
+                                value=<?php echo "'" .
+                            ($db->query("Select movie_title from $t_movies where movie_id=$tMovieID"))->fetch()['movie_title'] . "'" ?> />
                         </div>
                     </div><BR>
 
@@ -334,7 +336,7 @@ try {
                                     ?>
                                 <td style='text-align:center'>
                                     <input type="checkbox" class="form-check-input" id="closeShow" name="closeShow[]"
-                                        value=<?php echo $showTable[$i]['show_id']; ?>> Close Show
+                                        value=<?php echo $showTable[$i]['show_id']; ?>>Close Show
                                     <?php echo $showTable[$i]['show_id']; ?> </input>
                                 </td>
                                 </tr>

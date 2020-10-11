@@ -69,7 +69,7 @@ try {
             foreach($db->query("SELECT b.theatre_name, b.theatre_location, a.show_date, c.movie_title, a.show_slot 
                 from $t_shows as a, $t_theatre as b, $t_movies as c where a.show_theatre_id = b.theatre_id 
                 and a.show_movie_id = c.movie_id and a.show_theatre_id = $showTheatre and a.show_date = '$checkDate' and
-                a.show_slot = '$showSlots[$i]' ") as $rs1){
+                a.show_slot = '$showSlots[$i]' and a.show_status <> 'closed' ") as $rs1){
                 
                 $show_conflict = TRUE;
                 $conflictShow[$cr]['theatre_name'] = $rs1['theatre_name'];
