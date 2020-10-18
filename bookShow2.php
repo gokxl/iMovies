@@ -3,43 +3,57 @@
 session_start();
 
 if (isset($_SESSION["uid"])) {
+    //echo "UID is set <BR>";
     $uid = $_SESSION["uid"];
+} else {
+    header('Refresh:1   ; url=./login.php');
+    echo 'Please Log In First';
+    exit();
 }
 
-$chosenLang = $_POST['mov_lang'];
-//echo "chosen language is $chosenLang<br>";
+$movie_id = $_POST['movieID'];
+echo " the selected movie id is $movie_id<br>";
+$movieName = $_POST['movieName'];
+echo "Movie Name is $movieName <BR>";
+
+$theatre = $_POST['theatresSelect'];
+echo " the selected theatre is $theatre <br>";
+
+$city = $_POST['citiesSelect'];
+echo " the selected city is $city <br>";
 
 include './database/config/config.php';
-//set table name based on local or remote connection
 if ($connection == "local") {
-    $t_customer = "customer";
-    $t_Movies = "movies";
+    $t_theatre = "theatre";
+    $t_seats = "seats";
+    $t_movies = "movies";
+    $t_shows = "shows";
 } else {
-    $t_customer = "$database.customer";
-    $t_Movies = "$database.movies";
+    $t_theatre = "$database.theatre";
+    $t_seats = "$database.seats";
+    $t_movies = "$database.movies";
+    $t_shows = "$database.shows";
 }
-
 
 try {
     $db = new PDO("mysql:host=$host", $user, $password, $options);
+    //echo "Database connected successfully <BR>";
 
-    $i = 1;
-    foreach ($db->query("select movie_id, movie_title,movie_language,movie_cast,movie_description,movie_image_fn 
-            from $t_Movies where movie_language = '$chosenLang'") as $rs1) {
-        //echo 'movie title is: ' . $rs1['movie_title'] . "<BR>";
-
-        $movieTable[$i]['movie_id'] = $rs1['movie_id']; 
-        $movieTable[$i]['movie_title'] = $rs1['movie_title'];
-        $movieTable[$i]['movie_language'] = $rs1['movie_language'];
-        $movieTable[$i]['movie_cast'] = $rs1['movie_cast'];
-        $movieTable[$i]['movie_description'] = $rs1['movie_description'];
-        $movieTable[$i]['movie_image_fn'] = $rs1['movie_image_fn'];
-
-        //echo "the select movie names are" .  $movieTable[$i]['movie_title'] . " - " .      $movieTable[$i]['movie_cast'] . " <br>";
-        $i++;
+    //Code to populate selection of City, followed by selection of theatre, using JSON/Javascript
+    foreach ($db->query("SELECT DISTINCT theatre_location from $t_theatre where theatre_id in (SELECT DISTINCT show_theatre_id from  $t_shows where show_movie_id = $movie_id)") as $rs1) {
+        $cities[] = array("tcity" => $rs1['theatre_location']);
     }
+    foreach ($db->query("SELECT DISTINCT theatre_location,theatre_name from $t_theatre where theatre_id in (SELECT DISTINCT show_theatre_id from  $t_shows where show_movie_id = $movie_id)") as $rs2) {
+        $theatres[$rs2['theatre_location']][] = array("tid" => $rs2['theatre_id'], "tname" => $rs2['theatre_name']);
+    }
+    $jsonCities = json_encode($cities);
+    $jsonTheatres = json_encode($theatres);
+
+    //echo $jsonCities . "<BR>";
+    //echo $jsonTheatres . "<BR>";
+
 } catch (PDOException $e) {
-    print "Error!: " . $e->getMessage() . "<br/>";
+    print "Error!: " . $e->getMessage() . "<br />";
     die();
 }
 
@@ -49,7 +63,7 @@ try {
 <html lang="en">
 
 <head>
-    <title>iMovies -  Online Movies Reservation System</title>
+    <title>iMovies - Online Movies Reservation System </title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -63,10 +77,36 @@ try {
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
+    <!-- script to populate theatre names based on selected City dynamically -->
+    <script type='text/javascript'>
+        <?php
+        // make json variables available
+        echo "var cities = $jsonCities; \n";
+        echo "var theatres = $jsonTheatres; \n";
+        ?>
 
+        function loadCities() {
+            var select = document.getElementById("citiesSelect");
+            select.onchange = updateTheatres;
+            for (var i = 0; i < cities.length; i++) {
+                select.options[i] = new Option(cities[i].tcity);
+            }
+        }
+
+        function updateTheatres() {
+            var citySelect = this;
+            var tcity = this.value;
+            var theatresSelect = document.getElementById("theatresSelect");
+            theatresSelect.options.length = 0; //delete all options if any present
+            for (var i = 0; i < theatres[tcity].length; i++) {
+                theatresSelect.options[i] = new Option(theatres[tcity][i].tname, theatres[tcity][i].tid);
+            }
+        }
+    </script>
+    <!-- End of script to populate theatre names based on selected City dynamically  -->
 </head>
 
-<body>
+<body onload='loadCities()'>
 
     <!-- Header section goes here -->
     <div class="container-fluid text-center bg-primary text-white pt-3">
@@ -85,11 +125,10 @@ try {
             <!-- Rightside navbar Links: Set based on User signed-in or not-->
             <?php
             if (isset($_SESSION["uid"])) {
-
             ?>
                 <!-- Set rightside navbar links if no user signed-in -->
                 <ul class="navbar-nav navbar-right">
-                    <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown">Welcome <?php echo $uid; ?></a>
+                    <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user-secret"></i> Welcome <?php echo $uid; ?></a>
                         <ul class="dropdown-menu">
                             <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
                             <li><a href="#"> <i class="fa fa-briefcase"></i> My Bookings</a></li>
@@ -151,75 +190,41 @@ try {
 
                 </div>
             </div>
-            <!-- content add -->
-            <div class="container my-3" style="margin-top:30px">
+            <!-- Add Show Form starts here -->
 
-                <?php
-                $number_of_cards = 0;         //Track to display 4 cards per row
-                $row_count = $db->query("SELECT count(*) from $t_Movies")->fetchColumn();
-                $number_of_rows = 0;
-                $number_of_movies = 0;
+            <div class="container" style=" width:80% ">
+                <form action="bookShow2 .php" method="post" enctype="multipart/form-data">
 
-                for ($i = 1; $i <= count($movieTable); $i++) {
-
-                    if ($number_of_cards == 0) {     //3 cards per row  
-                ?>
-                        <div class="card-deck">
-                        <?php }
-                    if (($number_of_rows % 2) == 0) {
-                        if (($number_of_cards % 2) == 0) {
-                            $bg = "bg-primary";
-                            $btn = "btn-warning";
-                        } else {
-                            $bg = "bg-warning";
-                            $btn = "btn-primary";
-                        }
-                    } else {
-                        if (($number_of_cards % 2) == 1) {
-                            $bg = "bg-primary";
-                            $btn = "btn-warning";
-                        } else {
-                            $bg = "bg-warning";
-                            $btn = "btn-primary";
-                        }
-                    } ?>
-
-                        <div class="card <?php echo $bg; ?>" style="max-width:18rem">
-                            <img class="card-img-top rounded-circle" src="./database/images/<?php echo $movieTable[$i]['movie_image_fn']; ?>" alt="Card image" style="width:100%">
-                            <div class="card-body">
-                                <h4 class="card-title"> <?php echo $movieTable[$i]['movie_title'], "(", $movieTable[$i]['movie_language'], ")"; ?></h4>
-                                <p class="card-text"> <?php echo $movieTable[$i]['movie_cast']; ?> </p>
-                                <p class="card-text small"> <?php echo $movieTable[$i]['movie_description']; ?> </p>
-
-                            </div>
-                            <div class="card-footer">
-                                <a href="./bookShow.php?p_movie_id=<?php echo $movieTable[$i]['movie_id']; ?>" class="btn <?php echo $btn; ?>">Book Show</a>
-                            </div>
+                    <div class="row justify-content-center">
+                        <div class="col sm-6">
+                            <label class="font-weight-bold" for="citiesSelect">Select City:</label>
+                            <select class="form-control" id="citiesSelect" name="citiesSelect">
+                            </select>
                         </div>
+                        <div class="col sm-6">
+                            <label class="font-weight-bold" for="theatresSelect">Select Theatre:</label>
+                            <select class="form-control" id="theatresSelect" name="theatresSelect">
+                            </select>
+                        </div>
+                    </div><BR>
+                    <div class="row justify-content-center ">
+                        <input class="form-group bg-primary text-white" type="submit" name="bookShow2.php" value="Click to proceed" />
+                    </div>
+                </form>
 
-                        <?php
-                        $number_of_cards++;
-                        $number_of_movies++;
-                        if (($number_of_cards == 4) or ($number_of_movies == $row_count)) {  ?>
-                        </div> <BR>
-                <?php
-                            $number_of_cards = 0;
-                            $number_of_rows++;
-                        }
-                    }
-                ?>
+
 
             </div>
         </div>
-    </div>
-    <!-- footer section goes here-->
+        <!-- footer section goes here-->
 
-    <div class="navbar fixed-bottom">
-        <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
-            <h3> Developed using following technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap, Javascript.</h3>
+        <div class="navbar fixed-bottom">
+            <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
+                <h3> Developed using following technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap, Javascript.
+                </h3>
+            </div>
         </div>
     </div>
-
 </body>
 
 </html>
