@@ -43,12 +43,37 @@ if (
         die();
     }
 }
+include './database/config/config.php';
+//set table name based on local or remote connection
+if ($connection == "local") {
+    $t_Movies = "movies";
+} else {
+    $t_Movies = "$database.movies";
+}
+try {
+    $i = 1;
+    $db = new PDO("mysql:host=$host", $user, $password, $options);
+
+    foreach ($db->query("select movie_id,movie_title,movie_image_fn,movie_cast
+                from $t_Movies order by movie_id desc limit 6") as $rs1) {
+
+        $movieTable[$i]['movie_image_fn'] = $rs1['movie_image_fn'];
+        $movieTable[$i]['movie_title'] = $rs1['movie_title'];
+        $movieTable[$i]['movie_cast'] = $rs1['movie_cast'];
+
+        $i++;
+    }
+} catch (PDOException $e) {
+    print "Error!: " . $e->getMessage() . "<br/>";
+    die();
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>iMovies -  Online Movies Reservation System</title>
+    <title>iMovies - Online Movies Reservation System</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -165,18 +190,23 @@ if (
                     <div class="carousel-inner">
                         <div class="carousel-item active">
                             <div class="row">
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
+                                <?php for ($j = 1; $j <= 3; $j++) { ?>
+                                    <div class="col-sm-4">
+                                        <img src="./database/images/<?php echo $movieTable[$j]['movie_image_fn']; ?>" alt="Ratsasan">
+                                    </div>
+                                <?php } ?>
                             </div>
                         </div>
-                        <div class="carousel-item">
+                        <div class="carousel-item active">
+                            <div class="row">
+                                <?php for ($j = 4; $j <= 6; $j++) { ?>
+                                    <div class="col-sm-4">
+                                        <img src="./database/images/<?php echo $movieTable[$j]['movie_image_fn']; ?>" alt="Ratsasan">
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                        <!--<div class="carousel-item">
                             <div class="row">
                                 <div class="col-sm-4">
                                     <img src="./img/ratsasan6.jpg" alt="Ratsasan">
@@ -188,7 +218,7 @@ if (
                                     <img src="./img/ratsasan6.jpg" alt="Ratsasan">
                                 </div>
                             </div>
-                        </div>
+                        </div>-->
                         <!-- Left and right controls -->
                         <a class="carousel-control-prev" href="#demo" data-slide="prev">
                             <span class="carousel-control-prev-icon"></span>

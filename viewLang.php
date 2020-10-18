@@ -53,7 +53,7 @@ if ($connection == "local") {
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark pt-3">
         <div class="container-fluid">
             <!-- Brand -->
-            <a class="navbar-brand" href="#">iMovies</a>
+            <a class="navbar-brand" href="./index2.php">iMovies</a>
 
             <!-- Rightside navbar Links: Set based on User signed-in or not-->
             <?php
