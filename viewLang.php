@@ -65,7 +65,7 @@ if ($connection == "local") {
                     <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown">Welcome <?php echo $uid; ?></a>
                         <ul class="dropdown-menu">
                             <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
-                            <li><a href="#"> <i class="fa fa-briefcase"></i> My Bookings</a></li>
+                            
                             <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
                         </ul>
                     </li>
@@ -111,7 +111,7 @@ if ($connection == "local") {
                                     </nav>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="bookNow.php">Book Now</a>
+                                    <a class="nav-link" href="./myBookings.php">My Bookings</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="aboutUs.php">About us</a>

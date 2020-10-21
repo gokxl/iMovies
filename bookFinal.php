@@ -12,43 +12,25 @@ if (isset($_SESSION["uid"])) {
 }
 
 $movie_id = $_POST['movieID'];
-echo " the selected movie id is $movie_id<br>";
 $movieName = $_POST['movieName'];
-echo "Movie Name is $movieName <BR>";
-
 $theatre_id = $_POST['tID'];
-echo " the selected theatre is $theatre_id <br>";
-
 $tdate = $_POST['showDate'];
-echo " the selected date is $tdate <br>";
-
 $tslot = $_POST['showSlot'];
-echo " the selected slot is $tslot <br>";
-
 $ttype = $_POST['seatType'];
-echo " the selected seat type is $ttype <br>";
-
 $tshow_id = $_POST['showID'];
-echo " the selected show ID is $tshow_id <br>";
-
 $tcount = $_POST['customerCount'];
-echo " Number of Customers are $tcount <br>";
-
 $tamount = $_POST['amount_paid'];
-echo " Amount to be paid $tamount <br>";
-
 $tpaymode = $_POST['payment_mode'];
-echo " Payment Mode: $tpaymode <br>";
+//echo "Payment Mode: $tpaymode <BR>";
 
 $customers = array(array());
 for($i=1; $i<=$tcount; $i++){ 
         $customers[$i]['cName']=$_POST['cName'.$i];
         $customers[$i]['cGender']=$_POST['cGender'.$i];
         $customers[$i]['cAge']=$_POST['cAge'.$i];
-        echo $i. " Customer name: ".$customers[$i]['cName'];
-        echo " Gender : ".$customers[$i]['cGender'];
-        echo " Age : ".$customers[$i]['cAge']."<BR>";
-}
+        $customers[$i]['ctype']=$ttype;
+        $customers[$i]['cCost']=$tamount/$tcount;
+ }
 
 include './database/config/config.php';
 if ($connection == "local") {
@@ -104,10 +86,18 @@ try {
             $rows2 = $stmt2->execute(array());
         } 
 
+        //Fetch ticket IDs for the reservation based on reservation id
+        $j=1;
+        foreach($db->query("Select ticket_id from $t_ticket where ticket_reservation_id = $sql_reservation_id") as $rs1){
+            $customers[$j]['ticket_id']=$rs1['ticket_id'];
+            $j++;
+        }
+
+        //Update show inventory, deduct number of seats booked now from existing inventory
         $inventory_updated = $db->query("Update $t_show_inventory set inventory_seats_available = $seats_available-$tcount
                                     where inventory_show_id = $tshow_id and inventory_seat_type='$ttype'")->execute();
         if ($inventory_updated>0){
-            echo " Show Inventory updated successfully";
+            //echo " Show Inventory updated successfully";
             $seats_available = $db->query("SELECT inventory_seats_available from $t_show_inventory where inventory_show_id = $tshow_id
             and inventory_seat_type='$ttype'")->fetch()['inventory_seats_available'];
         }
@@ -168,7 +158,7 @@ try {
                             class="fa fa-user-secret"></i> Welcome <?php echo $uid; ?></a>
                     <ul class="dropdown-menu">
                         <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
-                        <li><a href="#"> <i class="fa fa-briefcase"></i> My Bookings</a></li>
+                    
                         <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
                     </ul>
                 </li>
@@ -214,7 +204,7 @@ try {
                                     </nav>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="bookNow.php">Book Now</a>
+                                    <a class="nav-link" href="./myBookings.php">My Bookings</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="aboutUs.php">About us</a>
@@ -230,7 +220,7 @@ try {
             <!-- Add Show Form starts here -->
 
             <div class="container" style=" width:80% ">
-                <h6> Congratulations!... your booking completed successfully. </h6>
+                <h4 class="text-success"> Congratulations!... your booking completed successfully. </h4>
                     <div class="row justify-content-center">
                         <div class="col sm-3">
                             <label class="font-weight-bold">Booking Reference:</label>
@@ -267,9 +257,9 @@ try {
                                 value=<?php echo $tslot; ?> readonly />
                         </div>
                         <div class="col sm-3">
-                            <label class="font-weight-bold" for="seatType">Seat Type:</label>
-                            <input type="text" class="form-control" id="seatType" name="seatType"
-                                value=<?php echo $ttype; ?> readonly />
+                            <label class="font-weight-bold" for="payMode">Payment Mode:</label>
+                            <input type="text" class="form-control" id="payMode" name="payMode"
+                                value=<?php echo "$tpaymode"; ?> readonly />
                         </div>
                         <div class="col sm-3">
                             <label class="font-weight-bold" for="amountPaid">Amount Paid:</label>
@@ -297,23 +287,30 @@ try {
                                         <th>Customer Name</th>
                                         <th>Gender</th>
                                         <th>Age</th>
+                                        <th>Seat Type</th>
+                                        <th>Ticket Cost</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
                                     for($i=1; $i<=$tcount; $i++){ 
-                                        echo "<tr><td>" . $customers[$i]['cName'] . "</td>";
+                                        echo "<tr><td>" . $customers[$i]['ticket_id'] . "</td>";
+                                        echo "<td>" . $customers[$i]['cName'] . "</td>";
                                         echo "<td>" . $customers[$i]['cGender'] . "</td>";
                                         echo "<td>" . $customers[$i]['cAge'] . "</td>";
-                                        echo "<td>" . $unitPrice . "</td></tr>";
+                                        echo "<td>" . $customers[$i]['ctype'] . "</td>";
+                                        echo "<td>" . $customers[$i]['cCost'] . "</td></tr>";
+                    
                                     }   
                                     ?>
-                                    <tr><td><b>Total Cost:</b></td><td></td><td></td><td><b> <?php echo $unitPrice*$tcount; ?> </b> </td></tr>
+                                    <tr><td><b>Total Amount Paid:</b></td><td></td><td></td><td></td><td></td><td><b> <?php echo $tamount; ?> </b> </td></tr>
                                 </tbody>
                             </table>
                         </div>
                 
-                    </div><BR><BR><BR>
+                    </div>
+                    <h4 class="text-success"> Check your email/SMS. Tickets will be delivered through registered email & mobile number. </h4>
+                    <BR><BR>
             </div>
         </div>
 

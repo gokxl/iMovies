@@ -6,17 +6,22 @@ if (isset($_SESSION["uid"])) {
     $uid = $_SESSION["uid"];
 }
 
-$chosenLang = $_POST['mov_lang'];
-//echo "chosen language is $chosenLang<br>";
+$theatre_id = $_POST['theatresSelect'];
+$tcity = $_POST['citiesSelect'];
+echo "Theatre ID is $theatre_id<br>";
 
 include './database/config/config.php';
 //set table name based on local or remote connection
 if ($connection == "local") {
     $t_customer = "customer";
     $t_Movies = "movies";
+    $t_shows = "shows";
+    $t_theatre = "theatre";
 } else {
     $t_customer = "$database.customer";
     $t_Movies = "$database.movies";
+    $t_shows = "$database.shows";
+    $t_theatre = "$database.theatre";
 }
 
 
@@ -25,7 +30,8 @@ try {
 
     $i = 1;
     foreach ($db->query("select movie_id, movie_title,movie_language,movie_cast,movie_description,movie_image_fn 
-            from $t_Movies where movie_language = '$chosenLang'") as $rs1) {
+            from $t_Movies where movie_id in(select distinct show_movie_id from $t_shows where show_theatre_id=$theatre_id and 
+            show_status in('upcoming','running'))") as $rs1) {
         //echo 'movie title is: ' . $rs1['movie_title'] . "<BR>";
 
         $movieTable[$i]['movie_id'] = $rs1['movie_id']; 
@@ -49,7 +55,7 @@ try {
 <html lang="en">
 
 <head>
-    <title>iMovies -  Online Movies Reservation System</title>
+    <title>iMovies - Online Movies Reservation System</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -87,24 +93,25 @@ try {
             if (isset($_SESSION["uid"])) {
 
             ?>
-                <!-- Set rightside navbar links if no user signed-in -->
-                <ul class="navbar-nav navbar-right">
-                    <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown">Welcome <?php echo $uid; ?></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
-                         
-                            <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
+            <!-- Set rightside navbar links if no user signed-in -->
+            <ul class="navbar-nav navbar-right">
+                <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown">Welcome
+                        <?php echo $uid; ?></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
+                   
+                        <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
 
             <?php } else { ?>
-                <!-- Set rightside navbar links if user has signed-in -->
-                <ul class="navbar-nav navbar-right">
-                    <li class="nav-item">
-                        <a class="nav-link" href="./login.php"><i class="fa fa-sign-in"></i> Login</a>
-                    </li>
-                </ul>
+            <!-- Set rightside navbar links if user has signed-in -->
+            <ul class="navbar-nav navbar-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="./login.php"><i class="fa fa-sign-in"></i> Login</a>
+                </li>
+            </ul>
             <?php } ?>
 
         </div>
@@ -152,7 +159,21 @@ try {
                 </div>
             </div>
             <!-- content add -->
-            <div class="container my-3" style="margin-top:30px">
+            <div class="container" style=" width:80% ">
+                <div class="row justify-content-center">
+                    <div class="col sm-6">
+                        <label class="font-weight-bold">Selected Location:</label>
+                        <input type="text" class="form-control" id="tCity" name="tCity" value=<?php echo $tcity; ?>
+                            readonly />
+                    </div>
+                    <div class="col sm-6">
+                        <label class="font-weight-bold">Selected Theatre:</label>
+                        <input type="text" class="form-control" id="tname" name="tname"
+                            value=<?php echo '"' . ($db->query("Select theatre_name from $t_theatre where theatre_id=$theatre_id"))->fetch()['theatre_name'] . '"' ?>
+                            readonly />
+                    </div>
+                </div><BR>
+
 
                 <?php
                 $number_of_cards = 0;         //Track to display 4 cards per row
@@ -164,8 +185,8 @@ try {
 
                     if ($number_of_cards == 0) {     //3 cards per row  
                 ?>
-                        <div class="card-deck">
-                        <?php }
+                <div class="card-deck">
+                    <?php }
                     if (($number_of_rows % 2) == 0) {
                         if (($number_of_cards % 2) == 0) {
                             $bg = "bg-primary";
@@ -184,24 +205,29 @@ try {
                         }
                     } ?>
 
-                        <div class="card <?php echo $bg; ?>" style="max-width:18rem">
-                            <img class="card-img-top rounded-circle" src="./database/images/<?php echo $movieTable[$i]['movie_image_fn']; ?>" alt="Card image" style="width:100%">
-                            <div class="card-body">
-                                <h4 class="card-title"> <?php echo $movieTable[$i]['movie_title'], "(", $movieTable[$i]['movie_language'], ")"; ?></h4>
-                                <p class="card-text"> <?php echo $movieTable[$i]['movie_cast']; ?> </p>
-                                <p class="card-text small"> <?php echo $movieTable[$i]['movie_description']; ?> </p>
+                    <div class="card <?php echo $bg; ?>" style="max-width:18rem">
+                        <img class="card-img-top rounded-circle"
+                            src="./database/images/<?php echo $movieTable[$i]['movie_image_fn']; ?>" alt="Card image"
+                            style="width:100%">
+                        <div class="card-body">
+                            <h4 class="card-title">
+                                <?php echo $movieTable[$i]['movie_title'], "(", $movieTable[$i]['movie_language'], ")"; ?>
+                            </h4>
+                            <p class="card-text"> <?php echo $movieTable[$i]['movie_cast']; ?> </p>
+                            <p class="card-text small"> <?php echo $movieTable[$i]['movie_description']; ?> </p>
 
-                            </div>
-                            <div class="card-footer">
-                                <a href="./bookShow.php?p_movie_id=<?php echo $movieTable[$i]['movie_id']; ?>" class="btn <?php echo $btn; ?>">Book Show</a>
-                            </div>
                         </div>
+                        <div class="card-footer">
+                            <a href="./bookShowA.php?p_movie_id=<?php echo $movieTable[$i]['movie_id']."&p_theatre_id=".$theatre_id; ?>"
+                                class="btn <?php echo $btn; ?>">Book Show</a>
+                        </div>
+                    </div>
 
-                        <?php
+                    <?php
                         $number_of_cards++;
                         $number_of_movies++;
                         if (($number_of_cards == 4) or ($number_of_movies == $row_count)) {  ?>
-                        </div> <BR>
+                </div> <BR>
                 <?php
                             $number_of_cards = 0;
                             $number_of_rows++;
@@ -212,6 +238,7 @@ try {
             </div>
         </div>
     </div>
+    <BR><BR>
     <!-- footer section goes here-->
 
     <div class="navbar fixed-bottom">

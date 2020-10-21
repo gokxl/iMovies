@@ -12,7 +12,7 @@ if (isset($_SESSION["uid"])) {
 }
 
 $movie_id = $_GET['p_movie_id'];
-//echo " the selected movie id is $movie_id";
+$theatre = $_GET['p_theatre_id'];
 
 include './database/config/config.php';
 if ($connection == "local") {
@@ -32,11 +32,11 @@ try {
     //echo "Database connected successfully <BR>";
 
     //Code to populate selection of City, followed by selection of theatre, using JSON/Javascript
-    foreach ($db->query("SELECT DISTINCT theatre_location from $t_theatre where theatre_id in (SELECT DISTINCT show_theatre_id from  $t_shows where show_movie_id = $movie_id)") as $rs1) {
-        $cities[] = array("tcity" => $rs1['theatre_location']);
+    foreach ($db->query("SELECT DISTINCT show_date from $t_shows where show_movie_id = $movie_id and show_theatre_id = $theatre") as $rs1) {
+        $cities[] = array("tdate" => $rs1['show_date']);
     }
-    foreach ($db->query("SELECT DISTINCT theatre_id, theatre_location,theatre_name from $t_theatre where theatre_id in (SELECT DISTINCT show_theatre_id from  $t_shows where show_movie_id = $movie_id)") as $rs2) {
-        $theatres[$rs2['theatre_location']][] = array("tid" => $rs2['theatre_id'], "tname" => $rs2['theatre_name']);
+    foreach ($db->query("SELECT DISTINCT show_date,show_slot from $t_shows where show_movie_id = $movie_id and show_theatre_id = $theatre") as $rs2) {
+        $theatres[$rs2['show_date']][] = array("tslot" => $rs2['show_slot']);
     }
     $jsonCities = json_encode($cities);
     $jsonTheatres = json_encode($theatres);
@@ -81,7 +81,7 @@ try {
             var select = document.getElementById("citiesSelect");
             select.onchange = updateTheatres;
             for (var i = 0; i < cities.length; i++) {
-                select.options[i] = new Option(cities[i].tcity);
+                select.options[i] = new Option(cities[i].tdate);
             }
         }
 
@@ -91,7 +91,7 @@ try {
             var theatresSelect = document.getElementById("theatresSelect");
             theatresSelect.options.length = 0; //delete all options if any present
             for (var i = 0; i < theatres[tcity].length; i++) {
-                theatresSelect.options[i] = new Option(theatres[tcity][i].tname, theatres[tcity][i].tid);
+                theatresSelect.options[i] = new Option(theatres[tcity][i].tslot);
             }
         }
     </script>
@@ -123,7 +123,7 @@ try {
                     <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user-secret"></i> Welcome <?php echo $uid; ?></a>
                         <ul class="dropdown-menu">
                             <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
-                          
+                       
                             <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
                         </ul>
                     </li>
@@ -185,29 +185,42 @@ try {
             <!-- Add Show Form starts here -->
 
             <div class="container" style=" width:80% ">
-                <form action="bookShow2.php" method="post" enctype="multipart/form-data">
+                <form action="bookShow3.php" method="post" enctype="multipart/form-data">
+                    <div class="row justify-content-center">
+                        <div class="col sm-6">
+                            <label class="font-weight-bold">Selected Location:</label>
+                            <input type="text" class="form-control" id="tCity" name="tCity" value=<?php echo '"' .
+                                ($db->query("Select theatre_location from $t_theatre where theatre_id=$theatre"))->fetch()['theatre_location'] . '"' ?> readonly />
+                        </div>
+                        <div class="col sm-6">
+                            <label class="font-weight-bold">Selected Theatre:</label>
+                            <input type="text" class="form-control" id="tname" name="tname" value=<?php echo '"' .
+                                ($db->query("Select theatre_name from $t_theatre where theatre_id=$theatre"))->fetch()['theatre_name'] . '"' ?> readonly />
+                        </div>
+                    </div><BR>
                     <div class="row justify-content-center">
                         <div class="col sm-6">
                             <label class="font-weight-bold">Selected Movie:</label>
                             <input type="text" class="form-control" id="movieName" name="movieName" value=<?php echo '"' .
                                 ($db->query("Select movie_title from $t_movies where movie_id=$movie_id"))->fetch()['movie_title'] . '"' ?> readonly />
+
                         </div>
                     </div><BR>
 
                     <div class="row justify-content-center">
                         <div class="col sm-6">
-                            <label class="font-weight-bold" for="citiesSelect">Select City:</label>
+                            <label class="font-weight-bold" for="citiesSelect">Select Date:</label>
                             <select class="form-control" id="citiesSelect" name="citiesSelect">
                             </select>
                         </div>
                         <div class="col sm-6">
-                            <label class="font-weight-bold" for="theatresSelect">Select Theatre:</label>
+                            <label class="font-weight-bold" for="theatresSelect">Select Slot:</label>
                             <select class="form-control" id="theatresSelect" name="theatresSelect">
                             </select>
                         </div>
                     </div><BR>
                     <input type="hidden" class="form-control" id="movieID" name="movieID" value=<?php echo $movie_id; ?> />
-
+                    <input type="hidden" class="form-control" id="tID" name="tID" value=<?php echo $theatre; ?> />
                     <div class="row justify-content-center ">
                         <input class="form-group bg-primary text-white" type="submit" name="bookShow2.php" value="Click to proceed" />
                     </div>

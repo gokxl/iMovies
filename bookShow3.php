@@ -12,18 +12,10 @@ if (isset($_SESSION["uid"])) {
 }
 
 $movie_id = $_POST['movieID'];
-echo " the selected movie id is $movie_id<br>";
 $movieName = $_POST['movieName'];
-echo "Movie Name is $movieName <BR>";
-
 $theatre_id = $_POST['tID'];
-echo " the selected theatre is $theatre_id <br>";
-
 $tdate = $_POST['citiesSelect'];
-echo " the selected date is $tdate <br>";
-
 $tslot = $_POST['theatresSelect'];
-echo " the selected slot is $tslot <br>";
 
 include './database/config/config.php';
 if ($connection == "local") {
@@ -47,7 +39,7 @@ try {
     //Fetch unique show_id from shows based on selected movie_id, thetre_id, show_date and show_slot
     $show_id = $db->query("SELECT show_id from $t_shows where show_movie_id = $movie_id and show_theatre_id = $theatre_id
                             and show_date='$tdate' and show_slot = '$tslot'")->fetch()['show_id'];
-    echo "Show ID is : $show_id <BR>";    
+    //echo "Show ID is : $show_id <BR>";    
 
 
     //Code to populate seat type from show inventory table 
@@ -55,8 +47,6 @@ try {
     foreach ($db->query("SELECT inventory_seat_type, inventory_seats_available from $t_show_inventory where inventory_show_id = $show_id") as $rs1) {
         $inv_seats[$i]['stype'] = $rs1['inventory_seat_type'];
         $inv_seats[$i]['savail'] = $rs1['inventory_seats_available'];
-        echo "Seat Type         :" . $inv_seats[$i]['stype'];
-        echo "Seats Available   :" . $inv_seats[$i]['savail'] .  "<BR>";
         $i++;
     }
 
@@ -115,7 +105,7 @@ try {
                             class="fa fa-user-secret"></i> Welcome <?php echo $uid; ?></a>
                     <ul class="dropdown-menu">
                         <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
-                        <li><a href="#"> <i class="fa fa-briefcase"></i> My Bookings</a></li>
+                   
                         <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
                     </ul>
                 </li>
@@ -161,7 +151,7 @@ try {
                                     </nav>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="bookNow.php">Book Now</a>
+                                    <a class="nav-link" href="./myBookings.php">My Bookings</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="aboutUs.php">About us</a>

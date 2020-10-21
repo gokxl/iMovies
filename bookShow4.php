@@ -12,36 +12,19 @@ if (isset($_SESSION["uid"])) {
 }
 
 $movie_id = $_POST['movieID'];
-echo " the selected movie id is $movie_id<br>";
 $movieName = $_POST['movieName'];
-echo "Movie Name is $movieName <BR>";
-
 $theatre_id = $_POST['tID'];
-echo " the selected theatre is $theatre_id <br>";
-
 $tdate = $_POST['showDate'];
-echo " the selected date is $tdate <br>";
-
 $tslot = $_POST['showSlot'];
-echo " the selected slot is $tslot <br>";
-
 $ttype = $_POST['seatType'];
-echo " the selected seat type is $ttype <br>";
-
 $tshow_id = $_POST['showID'];
-echo " the selected show ID is $tshow_id <br>";
-
 $tcount = $_POST['customerCount'];
-echo " Number of Customers are $tcount <br>";
 
 $customers = array(array());
 for($i=1; $i<=$tcount; $i++){ 
         $customers[$i]['cName']=$_POST['cName'.$i];
         $customers[$i]['cGender']=$_POST['cGender'.$i];
         $customers[$i]['cAge']=$_POST['cAge'.$i];
-        echo $i. " Customer name: ".$customers[$i]['cName'];
-        echo " Gender : ".$customers[$i]['cGender'];
-        echo " Age : ".$customers[$i]['cAge']."<BR>";
 }
 
 include './database/config/config.php';
@@ -66,15 +49,13 @@ try {
     //Fetch cost of ticket based on theatre_id and seat_type
     $unitPrice = $db->query("SELECT seat_price from $t_seats where seat_theatre_id = $theatre_id and 
                                 seat_type = '$ttype'")->fetch()['seat_price'];
-    echo "Unit Price for given theatre & seat type combination is : $unitPrice <BR>";    
+    //echo "Unit Price for given theatre & seat type combination is : $unitPrice <BR>";    
 
     //Fetch seat types and available seats from show inventory table 
     $i=1;
     foreach ($db->query("SELECT inventory_seat_type, inventory_seats_available from $t_show_inventory where inventory_show_id = $tshow_id") as $rs1) {
         $inv_seats[$i]['stype'] = $rs1['inventory_seat_type'];
         $inv_seats[$i]['savail'] = $rs1['inventory_seats_available'];
-        echo "Seat Type         :" . $inv_seats[$i]['stype'];
-        echo "Seats Available   :" . $inv_seats[$i]['savail'] .  "<BR>";
         $i++;
     }
     
@@ -132,7 +113,7 @@ try {
                             class="fa fa-user-secret"></i> Welcome <?php echo $uid; ?></a>
                     <ul class="dropdown-menu">
                         <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
-                        <li><a href="#"> <i class="fa fa-briefcase"></i> My Bookings</a></li>
+                    
                         <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
                     </ul>
                 </li>
@@ -178,7 +159,7 @@ try {
                                     </nav>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="bookNow.php">Book Now</a>
+                                    <a class="nav-link" href="./myBookings.php">My Bookings</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="aboutUs.php">About us</a>
@@ -289,12 +270,12 @@ try {
                             <div class="form-group">
                                 <label class="font-weight-bold" for="payment_mode">Select Payment Mode:</label> <BR>
                                 <label class="radio-inline"><input type="radio" name="payment_mode"
-                                        value="Credit card">Credit card</label>
+                                        value="Credit card" required>Credit card</label>
                                 <label class="radio-inline"><input type="radio" name="payment_mode"
-                                        value="Debit card">Debit card</label>
-                                <label class="radio-inline"><input type="radio" name="payment_mode"
+                                        value="Debit card" required>Debit card</label>
+                                <label class="radio-inline" required><input type="radio" name="payment_mode"
                                         value="Net banking">Net banking</label>
-                                <label class="radio-inline"><input type="radio" name="payment_mode"
+                                <label class="radio-inline" required><input type="radio" name="payment_mode"
                                         value="UPI">UPI</label>
                             </div>
                         </div>

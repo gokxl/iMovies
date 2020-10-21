@@ -12,15 +12,9 @@ if (isset($_SESSION["uid"])) {
 }
 
 $movie_id = $_POST['movieID'];
-echo " the selected movie id is $movie_id<br>";
 $movieName = $_POST['movieName'];
-echo "Movie Name is $movieName <BR>";
-
 $theatre = $_POST['theatresSelect'];
-echo " the selected theatre is $theatre <br>";
-
 $city = $_POST['citiesSelect'];
-echo " the selected city is $city <br>";
 
 include './database/config/config.php';
 if ($connection == "local") {
@@ -131,7 +125,7 @@ try {
                     <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user-secret"></i> Welcome <?php echo $uid; ?></a>
                         <ul class="dropdown-menu">
                             <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
-                            <li><a href="#"> <i class="fa fa-briefcase"></i> My Bookings</a></li>
+                         
                             <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
                         </ul>
                     </li>
@@ -177,7 +171,7 @@ try {
                                     </nav>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="bookNow.php">Book Now</a>
+                                    <a class="nav-link" href="./myBookings.php">My Bookings</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="aboutUs.php">About us</a>
