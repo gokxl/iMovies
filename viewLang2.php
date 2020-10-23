@@ -211,7 +211,7 @@ try {
 
             </div>
         </div>
-    </div>
+    </div><BR><BR>
     <!-- footer section goes here-->
 
     <div class="navbar fixed-bottom">

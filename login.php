@@ -26,40 +26,40 @@ if (isset($_SESSION["uid"])) {
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
     <style>
-        .login-form {
-            width: 340px;
-            margin: 50px auto;
-        }
+    .login-form {
+        width: 340px;
+        margin: 50px auto;
+    }
 
-        .login-form form {
-            margin-bottom: 15px;
-            background: #f7f7f7;
-            box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-            padding: 30px;
-        }
+    .login-form form {
+        margin-bottom: 15px;
+        background: #f7f7f7;
+        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+        padding: 30px;
+    }
 
-        .login-form h2 {
-            margin: 0 0 15px;
-        }
+    .login-form h2 {
+        margin: 0 0 15px;
+    }
 
-        .form-control,
-        .btn {
-            min-height: 38px;
-            border-radius: 2px;
-        }
+    .form-control,
+    .btn {
+        min-height: 38px;
+        border-radius: 2px;
+    }
 
-        .input-group-addon .fa {
-            font-size: 18px;
-        }
+    .input-group-addon .fa {
+        font-size: 18px;
+    }
 
-        .btn {
-            font-size: 15px;
-            font-weight: bold;
-        }
+    .btn {
+        font-size: 15px;
+        font-weight: bold;
+    }
 
-        .bottom-action {
-            font-size: 14px;
-        }
+    .bottom-action {
+        font-size: 14px;
+    }
     </style>
 </head>
 
@@ -85,26 +85,26 @@ if (isset($_SESSION["uid"])) {
             if (isset($_SESSION["uid"])) {
 
             ?>
-                <!-- Set rightside navbar links if no user signed-in -->
-                <ul class="navbar-nav navbar-right">
-                    <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown">
-                            <?php if ($isadmin == 1) { ?> <i class="fa fa-usersecret"></i> <?php } ?> Welcome
-                            <?php echo $uid; ?></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
-                       
-                            <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
+            <!-- Set rightside navbar links if no user signed-in -->
+            <ul class="navbar-nav navbar-right">
+                <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown">
+                        <?php if ($isadmin == 1) { ?> <i class="fa fa-usersecret"></i> <?php } ?> Welcome
+                        <?php echo $uid; ?></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
+
+                        <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
 
             <?php } else { ?>
-                <!-- Set rightside navbar links if user has signed-in -->
-                <ul class="navbar-nav navbar-right">
-                    <li class="nav-item">
-                        <a class="nav-link" href="./login.php"><i class="fa fa-sign-in"></i> Login</a>
-                    </li>
-                </ul>
+            <!-- Set rightside navbar links if user has signed-in -->
+            <ul class="navbar-nav navbar-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="./login.php"><i class="fa fa-sign-in"></i> Login</a>
+                </li>
+            </ul>
             <?php } ?>
 
         </div>
@@ -169,7 +169,8 @@ if (isset($_SESSION["uid"])) {
                                         <span class="fa fa-user"></span>
                                     </span>
                                 </div>
-                                <input type="text" name="uid" id="uid" class="form-control" placeholder="Username" required="required">
+                                <input type="text" name="uid" id="uid" class="form-control" placeholder="Username"
+                                    required="required">
                             </div>
                         </div>
                         <div class="form-group">
@@ -179,14 +180,17 @@ if (isset($_SESSION["uid"])) {
                                         <i class="fa fa-lock"></i>
                                     </span>
                                 </div>
-                                <input type="password" name="pwd" id="pwd" class="form-control" placeholder="Password" required="required">
+                                <input type="password" name="pwd" id="pwd" class="form-control" placeholder="Password"
+                                    required="required">
                             </div>
                         </div>
                         <div class="form-group">
-                            <button type="submit" name="login" class="btn btn-primary btn-block" onclick="return loginSubmit();">Log in</button>
+                            <button type="submit" name="login" class="btn btn-primary btn-block"
+                                onclick="return loginSubmit();">Log in</button>
                         </div>
                         <div class="bottom-action clearfix">
-                            <label class="float-left form-check-label"><input type="checkbox" name="isadmin" id="isadmin"> Login as
+                            <label class="float-left form-check-label"><input type="checkbox" name="isadmin"
+                                    id="isadmin"> Login as
                                 Admin</label>
                             <a href="#" class="float-right">Forgot Password?</a>
                         </div>
@@ -206,7 +210,12 @@ if (isset($_SESSION["uid"])) {
         </div>
 
         <script language="Javascript">
-            function loginSubmit() {
+        function loginSubmit() {
+            fuid = document.getElementById('uid').value;
+            fpwd = document.getElementById('pwd').value;
+            if (fuid == "" || fpwd == "") {
+                exit;
+            } else {
                 const cb = document.getElementById('isadmin');
                 if (cb.checked == true) {
                     document.loginForm.action = "adminIndex.php"
@@ -216,6 +225,7 @@ if (isset($_SESSION["uid"])) {
                 document.loginForm.submit(); // Submit the page
                 return true;
             }
+        }
         </script>
 
 </body>

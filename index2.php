@@ -111,24 +111,25 @@ try {
             if (isset($_SESSION["uid"])) {
 
             ?>
-                <!-- Set rightside navbar links if no user signed-in -->
-                <ul class="navbar-nav navbar-right">
-                    <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown">Welcome <?php echo $uid; ?></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
-                      
-                            <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
+            <!-- Set rightside navbar links if no user signed-in -->
+            <ul class="navbar-nav navbar-right">
+                <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown">Welcome
+                        <?php echo $uid; ?></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
+
+                        <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
 
             <?php } else { ?>
-                <!-- Set rightside navbar links if user has signed-in -->
-                <ul class="navbar-nav navbar-right">
-                    <li class="nav-item">
-                        <a class="nav-link" href="./login.php"><i class="fa fa-sign-in"></i> Login</a>
-                    </li>
-                </ul>
+            <!-- Set rightside navbar links if user has signed-in -->
+            <ul class="navbar-nav navbar-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="./login.php"><i class="fa fa-sign-in"></i> Login</a>
+                </li>
+            </ul>
             <?php } ?>
 
         </div>
@@ -177,13 +178,15 @@ try {
             </div>
             <!-- Carousel begins here which occupies 10/12 of width -->
 
-            <div class="col-sm-10">
-                <div id="demo" class="carousel slide" data-ride="carousel">
+            <div class="container" style=" width:80% ">
+                <h4 class="text-primary"> Trending movies </h4>
+
+                <div id="myCarousel" class="carousel slide" data-ride="carousel">
 
                     <!-- Indicators -->
                     <ul class="carousel-indicators">
-                        <li data-target="#demo" data-slide-to="0" class="active"></li>
-                        <li data-target="#demo" data-slide-to="1"></li>
+                        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                        <li data-target="#myCarousel" data-slide-to="1"></li>
                     </ul>
 
                     <!-- The slideshow -->
@@ -191,43 +194,62 @@ try {
                         <div class="carousel-item active">
                             <div class="row">
                                 <?php for ($j = 1; $j <= 3; $j++) { ?>
-                                    <div class="col-sm-4">
-                                        <img src="./database/images/<?php echo $movieTable[$j]['movie_image_fn']; ?>" alt="Ratsasan">
-                                    </div>
+                                <div class="col-sm-4">
+                                    <img src="./database/images/<?php echo $movieTable[$j]['movie_image_fn']; ?>"
+                                        alt="<?php echo $movieTable[$i]['movie_title']; ?>" style="width:100%;">
+                                </div>
                                 <?php } ?>
                             </div>
                         </div>
-                        <div class="carousel-item active">
+                        <div class="carousel-item">
                             <div class="row">
                                 <?php for ($j = 4; $j <= 6; $j++) { ?>
-                                    <div class="col-sm-4">
-                                        <img src="./database/images/<?php echo $movieTable[$j]['movie_image_fn']; ?>" alt="Ratsasan">
-                                    </div>
+                                <div class="col-sm-4">
+                                    <img src="./database/images/<?php echo $movieTable[$j]['movie_image_fn']; ?>"
+                                        alt="<?php echo $movieTable[$i]['movie_title']; ?>" style="width:100%;">
+                                </div>
                                 <?php } ?>
                             </div>
                         </div>
-                        <!--<div class="carousel-item">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                            </div>
-                        </div>-->
+
                         <!-- Left and right controls -->
-                        <a class="carousel-control-prev" href="#demo" data-slide="prev">
+                        <a class="carousel-control-prev" href="#myCarousel" data-slide="prev">
                             <span class="carousel-control-prev-icon"></span>
                         </a>
-                        <a class="carousel-control-next" href="#demo" data-slide="next">
+                        <a class="carousel-control-next" href="#myCarousel" data-slide="next">
                             <span class="carousel-control-next-icon"></span>
                         </a>
                     </div>
                 </div>
+
+                <BR>
+                <h4 class="text-primary"> iMovies - Online Reservation System Key features: </h4>
+                <ol>For Customers:
+                    <li>
+                        Customers can use Movies By Language, Movies by Theatre and Moives All options to browse and
+                        book movie tickets.
+                    </li>
+                    <li>
+                        Currently this system supports various theatures in three different cities.
+                    </li>
+                    <li>
+                        Customers can also view all their past reservations and individual ticket details for each of
+                        their reservations.
+                    </li>
+                </ol> <BR>
+                <ol>For Admin Users:
+                    <li>
+                       Admin Users can add new movies, add new theatres, define type of seats in those theatres, schedule shows.
+                    </li>
+                    <li>
+                        Use Add Movies to add any new movie with key informations like movie title, director, language and etc.
+                    </li>
+                    <li>
+                        Currenlty theatres can be added only in 3 cities such as Vellore, Bangalore and Chennai
+                    </li>
+                </ol>
+                                
+
             </div>
 
             <!-- Carousel ends here which occupies 10/12 of width -->

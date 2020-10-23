@@ -1,76 +1,12 @@
 <?php
-
-//Test Sessions variable with hardcoding
-// $_SESSION["uid"]="Karups";
-// $_SESSION["pwd"]="1234";
-
-
-if (isset($_SESSION["uid"])) {
-    $uid = $_SESSION["uid"];
-}
-
-if (
-    isset($_POST["login"]) && !empty($_POST["uid"])
-    && !empty($_POST["pwd"])
-) {
-
-
-    if (empty($_POST["isadmin"])) {
-        $isadmin = FALSE;
-        $_SESSION["isadmin"] = FALSE;
-    } else {
-        $isadmin = TRUE;
-        $_SESSION["isadmin"] = TRUE;
-    }
-
-    $uid = $_POST['uid'];
-    $pwd = $_POST['pwd'];
-
-    include './database/config/config.php';
-    // if Login as Admin is checked, use admin table. Or use user table.
-    if ($isadmin) {
-        if ($connection == "local") {
-            $t_admin = "admin";
-        } else {
-            $t_admin = "$database.admin";
-        }
-    } else {
-        if ($connection == "local") {
-            $t_customer = "customer";
-        } else {
-            $t_customer = "$database.customer";
-        }
-    }
-    //echo "table name is $t_user";
-
-    try {
-        $db = new PDO("mysql:host=$host", $user, $password, $options);
-        //echo "Database connected successfully <BR>";
-
-        if ($isadmin) {
-            $sql_select = "Select * from $t_admin where admin_username = '$uid' and admin_pwd = '$pwd'";
-            //echo "SQL Statement is : $sql_select <BR>";
-        } else {
-            $sql_select = "Select * from $t_customer where cust_username =  '$uid' and cust_pwd = '$pwd'";
-            //echo "SQL Statement is : $sql_select <BR>";
-        }
-
-        $stmt = $db->prepare($sql_select);
-        $stmt->execute();
-
-        if ($rows = $stmt->fetch()) {
-            //echo   $rows['username'];
-            //echo '<script>alert("Login Successful")</script>';
-            $_SESSION['valid'] = TRUE;
-            $_SESSION['uid'] = $_POST["uid"];
-            $_SESSION["pwd"] = $_POST["pwd"];
-        } else {
-            echo '<script>alert("Invalid Username or Password. Try again")</script>';
-        }
-    } catch (PDOException $e) {
-        print "Error!: " . $e->getMessage() . "<br/>";
-        die();
-    }
+if (isset($_POST['err'])) {
+    echo "Re-entering addRegistration.php";
+    $cname = $_POST["cname"];
+    $cage = $_POST["cage"];
+    $cgender = $_POST["cgender"];
+    $cphone = $_POST["cphone"];
+    $ferror = $_POST["ferror"];
+    $err = TRUE;
 }
 ?>
 <!DOCTYPE html>
@@ -115,26 +51,26 @@ if (
             if (isset($_SESSION["uid"])) {
 
             ?>
-                <!-- Set rightside navbar links if no user signed-in -->
-                <ul class="navbar-nav navbar-right">
-                    <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown">
-                            <?php if ($isadmin) { ?> <i class="fa fa-user-secret"></i> <?php } ?> Welcome
-                            <?php echo $uid; ?></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
-                          
-                            <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
+            <!-- Set rightside navbar links if no user signed-in -->
+            <ul class="navbar-nav navbar-right">
+                <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown">
+                        <?php if ($isadmin) { ?> <i class="fa fa-user-secret"></i> <?php } ?> Welcome
+                        <?php echo $uid; ?></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
+
+                        <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
 
             <?php } else { ?>
-                <!-- Set rightside navbar links if user has signed-in -->
-                <ul class="navbar-nav navbar-right">
-                    <li class="nav-item">
-                        <a class="nav-link" href="./login.php"><i class="fa fa-sign-in"></i> Login</a>
-                    </li>
-                </ul>
+            <!-- Set rightside navbar links if user has signed-in -->
+            <ul class="navbar-nav navbar-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="./login.php"><i class="fa fa-sign-in"></i> Login</a>
+                </li>
+            </ul>
             <?php } ?>
 
         </div>
@@ -152,33 +88,26 @@ if (
                         <nav class="navbar bg-light">
                             <ul class="navbar-nav">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Movies</a>
+                                    <a class="nav-link">Movies</a>
                                     <nav class="navbar bg-light">
                                         <ul class="navbar-nav">
                                             <li class="nav-item">
-                                                <a class="nav-link" href="#">By Language</a>
+                                                <a class="nav-link" href="./viewLang.php">By Language</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="#">By Screen</a>
+                                                <a class="nav-link" href="./viewTheatre.php">By Theatre</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="./viewAll.php">All</a>
                                             </li>
                                         </ul>
                                     </nav>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Screens</a>
-                                    <nav class="navbar bg-light">
-                                        <ul class="navbar-nav">
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="#">By Language</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="#">By Movies</a>
-                                            </li>
-                                        </ul>
-                                    </nav>
+                                    <a class="nav-link" href="./myBookings.php">My Bookings</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">About us</a>
+                                    <a class="nav-link" href="aboutUs.php">About us</a>
                                 </li>
                             </ul>
                         </nav>
@@ -193,7 +122,7 @@ if (
             <div class="container-sm" style="Width:80%">
 
                 <div class="login-form">
-                    <form action="./insertRegistration.php" method="post">
+                    <form action="./processRegistration.php" method="post">
                         <h2 class="text-center">Registration Form</h2>
                         <div class="container-fluid">
                             <div class="row">
@@ -205,7 +134,8 @@ if (
                                                     <span class="fa fa-user"></span>
                                                 </span>
                                             </div>
-                                            <input type="text" name="cname" id="cname" class="form-control" placeholder="Customer Name" required="required">
+                                            <input type="text" name="cname" id="cname" class="form-control"
+                                                placeholder="Customer Name" required <?php if($err){ echo "value=$cname"; } ?> >
                                         </div>
                                     </div>
                                 </div>
@@ -217,13 +147,15 @@ if (
                                                     <i class="fa fa-list-ol "></i>
                                                 </span>
                                             </div>
-                                            <input type="number" name="cage" id="cage" class="form-control" placeholder="Customer Age" required="required">
+                                            <input type="number" name="cage" id="cage" class="form-control"
+                                                placeholder="Customer Age" required>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-group">
-                                        <select class="form-control" id="cgender" name="cgender" placeholder="Select Gender">
+                                        <select class="form-control" id="cgender" name="cgender"
+                                            placeholder="Select Gender" >
                                             <option>m</option>
                                             <option>f</option>
                                             <option>t</option>
@@ -240,7 +172,8 @@ if (
                                                     <span class="fa fa-envelope"></span>
                                                 </span>
                                             </div>
-                                            <input type="email" name="cemail" id="cemail" class="form-control" placeholder="Customer Email" required="required">
+                                            <input type="email" name="cemail" id="cemail" class="form-control"
+                                                placeholder="Customer Email" required>
                                         </div>
                                     </div>
                                 </div>
@@ -252,7 +185,8 @@ if (
                                                     <span class="fa fa-mobile "></span>
                                                 </span>
                                             </div>
-                                            <input type="tel" name="cphone" id="cphone" class="form-control" placeholder="Customer Mobile Number" required="required">
+                                            <input type="tel" name="cphone" id="cphone" class="form-control"
+                                                placeholder="Customer Mobile Number" required>
                                         </div>
                                     </div>
                                 </div>
@@ -262,7 +196,7 @@ if (
                         <div class="container-sm" style="Width:40%">
 
                             <div class="login-form">
-                                <form action="./index2.php" method="post">
+                                <form action="./processRegistration.php" method="post">
                                     <div class="form-group">
                                         <div class="input-group">
                                             <div class="input-group-prepend">
@@ -270,7 +204,8 @@ if (
                                                     <span class="fa fa-user"></span>
                                                 </span>
                                             </div>
-                                            <input type="text" name="cuser" id="cuser" class="form-control" placeholder="Customer Username" required="required">
+                                            <input type="text" name="cuser" id="cuser" class="form-control"
+                                                placeholder="Enter Username" required>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -280,7 +215,8 @@ if (
                                                     <i class="fa fa-lock"></i>
                                                 </span>
                                             </div>
-                                            <input type="password" name="cpwd" id="cpwd" class="form-control" placeholder="Password" required="required">
+                                            <input type="password" name="cpwd" id="cpwd" class="form-control"
+                                                placeholder="Enter Password" required>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -290,11 +226,13 @@ if (
                                                     <i class="fa fa-lock"></i>
                                                 </span>
                                             </div>
-                                            <input type="password" name="cpwd1" id="cpwd1" class="form-control" placeholder="Confirm Password" required="required">
+                                            <input type="password" name="cpwd1" id="cpwd1" class="form-control"
+                                                placeholder="Confirm Password" required="required">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <button type="submit" name="register" class="btn btn-primary btn-block">Register</button>
+                                        <button type="submit" name="register"
+                                            class="btn btn-primary btn-block">Register</button>
                                     </div>
                                 </form>
                             </div>
@@ -306,6 +244,17 @@ if (
 
         </div>
     </div>
+
+    <!-- script to check user exist dynamically-->
+    <?php 
+    if (isset($_SESSION["regerror"])) { echo " Entering addRegistration again <BR>"; ?>
+        <script>
+        $(document).ready(function() {
+            alert("User Name already taken. Try another name");
+        });
+        </script>
+        <!-- End of script to check user exist dynamically -->
+    <?php } ?>
     <!-- footer section goes here-->
 
     <div class="navbar fixed-bottom">
