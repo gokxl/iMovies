@@ -117,7 +117,7 @@ die();
                         <?php echo $uid; ?></a>
                     <ul class="dropdown-menu">
                         <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
-                        
+
                         <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
                     </ul>
                 </li>
@@ -179,26 +179,26 @@ die();
             <!-----content add -->
 
             <div class="container" style=" width:80% ">
-                    <form action="viewTheatre2.php" method="post" enctype="multipart/form-data">
-                        <div class="row justify-content-center">
-                            <div class="col sm-6">
-                                <label class="font-weight-bold" for="citiesSelect">Select City:</label>
-                                <select class="form-control" id="citiesSelect" name="citiesSelect">
-                                </select>
-                            </div>
-                            <div class="col sm-6">
-                                <label class="font-weight-bold" for="theatresSelect">Select Theatre:</label>
-                                <select class="form-control" id="theatresSelect" name="theatresSelect">
-                                </select>
-                            </div>
-                        </div><BR>
-                      
-                        <div class="row justify-content-center ">
-                            <input class="form-group bg-primary text-white" type="submit" name="viewTheatre"
-                                value="Click to proceed" />
+                <form action="viewTheatre2.php" method="post" enctype="multipart/form-data">
+                    <div class="row justify-content-center">
+                        <div class="col sm-6">
+                            <label class="font-weight-bold" for="citiesSelect">Select City:</label>
+                            <select class="form-control" id="citiesSelect" name="citiesSelect">
+                            </select>
                         </div>
-                    </form>
-                
+                        <div class="col sm-6">
+                            <label class="font-weight-bold" for="theatresSelect">Select Theatre:</label>
+                            <select class="form-control" id="theatresSelect" name="theatresSelect">
+                            </select>
+                        </div>
+                    </div><BR>
+
+                    <div class="row justify-content-center ">
+                        <input class="form-group bg-primary text-white" type="submit" name="viewTheatre"
+                            value="Click to proceed" />
+                    </div>
+                </form>
+
                 <br>
                 <div class="row">
                     <div class="col-sm-2"></div>
@@ -206,11 +206,9 @@ die();
                     <img src="./img/viewpageImage2.jpg" alt="searchGuy">
                 </div>
             </div>
-            <div class="navbar fixed-bottom">
-                <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
-                    <h3> Developed using following technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap,
-                        Javascript.</h3>
-                </div>
+
+            <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
+                <h3> Developed using technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap,Javascript.</h3>
             </div>
 
 </body>

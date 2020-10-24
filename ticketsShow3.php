@@ -28,27 +28,15 @@ if ($connection == "local"){
     $t_movies = "movies";
     $t_shows = "shows";
     $t_show_inventory = "show_inventory";
+    $t_reservation = "reservation";
 }else {
     $t_theatre = "$database.theatre";
     $t_seats = "$database.seats";
     $t_movies = "$database.movies";
     $t_shows = "$database.shows";
     $t_show_inventory = "$database.show_inventory";
+    $t_reservation = "$database.reservation";
 }
-
-// Prepare start and end date of show for scheduling
-//$begin = new DateTime($showStartDate);
-//$end = new DateTime($showEndDate);
-//$end = $end->modify( '+1 day' ); //1 day added for daterange to cover end date
-//$interval = new DateInterval('P1D');
-//$daterange = new DatePeriod($begin, $interval, $end);
-
-//test date range
-/* foreach($daterange as $date) {
-    echo $date->format('Y-m-d')."<br />";
-} */
-
-//$show_conflict=FALSE;
 
 try { 
     $db = new PDO("mysql:host=$host",$user,$password,$options);
@@ -59,101 +47,21 @@ try {
         where show_theatre_id = $theatreID and show_movie_id=$tMovieID and show_status <> 'closed'") as $rs1){
         
         $showTable[$i]['show_id']=$rs1['show_id'];
+        $tshowid = $rs1['show_id'];
         $showTable[$i]['show_date']=$rs1['show_date'];
+        $tshowdate = $rs1['show_date'];
         $showTable[$i]['show_slot']=$rs1['show_slot'];
-        $showTable[$i]['show_status']=$rs1['show_status'];
+        $tshowslot = $rs1['show_slot'];
+        $showTable[$i]['booked']=$db->query("select sum(reservation_seats_booked) as booked from $t_reservation a,
+                                $t_shows b where a.reservation_show_id=$tshowid and a.reservation_show_id=b.show_id
+                                and b.show_date='$tshowdate' and b.show_slot = '$tshowslot' 
+                                group by reservation_show_id")->fetch()['booked'];
+        //$showTable[$i]['amount']=$db->query("select sum(reservation_amount) as amt from $t_reservation 
+          //                      where reservation_show_id=$tshowid and reservation_show_date=$tshowdate
+            //                    and reservation_show_slot=$tshowslot group by reservation_show_id")->fetch()['amt'];
         $i++;
     }
 
-    //echo "Database connected successfully <BR>";
-
-    /*
-    //Check for free slots. Combination of theatre, date and slot can't be duplicate
-    $n = count($showSlots);
-    //echo "Conflicting show schedules <BR>";
-    $cr = 1; //Increment to store conflict rows
-    foreach($daterange as $date) {
-        $checkDate = $date->format('Y-m-d');
-        //echo "checking for date: " . $checkDate . "<BR>";
-
-        for($i=0; $i < $n; $i++){
-            //echo("Checking for slot: " . $showSlots[$i] . " <BR>");     
-
-            foreach($db->query("SELECT b.theatre_name, b.theatre_location, a.show_date, c.movie_title, a.show_slot 
-                from $t_shows as a, $t_theatre as b, $t_movies as c where a.show_theatre_id = b.theatre_id 
-                and a.show_movie_id = c.movie_id and a.show_theatre_id = $showTheatre and a.show_date = '$checkDate' and
-                a.show_slot = '$showSlots[$i]' ") as $rs1){
-                
-                $show_conflict = TRUE;
-                $conflictShow[$cr]['theatre_name'] = $rs1['theatre_name'];
-                $conflictShow[$cr]['theatre_location'] = $rs1['theatre_location'];
-                $conflictShow[$cr]['show_date'] = $rs1['show_date'];
-                $conflictShow[$cr]['movie_title'] = $rs1['movie_title'];
-                $conflictShow[$cr]['show_slot'] = $rs1['show_slot'];
-                $cr++;
-                //echo $rs1['theatre_name'] . $rs1['theatre_location'] . $rs1['show_date'] . $rs1['movie_title'] . $rs1['show_slot'] . "<BR>";
-            }
-        }
-    }
-
-    $conflictRows = count($conflictShow);   //Number of conflicting shows 
-
-    
-
-    //Insert show schedules if there are no conflicts
-    if(!$show_conflict){
-        //echo "Insert into show and show inventory <BR>";
-        $j=1;
-        //select seat types and # of seats from theatre_seats
-        foreach($db->query("SELECT seat_type, seats_no_of_seats from $t_seats
-            where seat_theatre_id=$showTheatre") as $rs2) {
-                $seatTypes[$j] = $rs2['seat_type'];
-                $no_of_seats[$j] = $rs2['seats_no_of_seats'];
-                //echo $seatTypes[$j] . " - " . $no_of_seats[$j] . "<BR>";
-                $j++;
-            } 
-        $seatTypesCount = count($seatTypes);   
-        //echo "number of seat types in theatre $t_theatre_id is $seatTypesCount <BR>";
-
-        foreach($daterange as $date) {
-            for($i=0; $i<$n; $i++){
-                $sdate = $date->format('Y-m-d');
-                //echo "Hi " . $sdate . $showSlots[$i] . "<BR>";
-                $sql_insert1 = "INSERT INTO $t_shows (show_theatre_id, show_date, show_movie_id,show_slot,show_status) 
-                VALUES ($showTheatre,'$sdate',$showMovie,'$showSlots[$i]','$showStatus')";
-                //echo "SQL Insert1: $sql_insert1 <BR>";
-
-                $stmt1 = $db->prepare($sql_insert1);
-                $rows1 = $stmt1->execute(array());
-               
-                If ($rows1>0){   
-                    //echo "Shows added successfully.. <BR>";
-                    $sql_show_id ="SELECT max(show_id) as max_id from $t_shows";
-                    //echo "Select statement is $sql_show_id <BR>";
-                    $stmt = $db->query($sql_show_id);
-                    $rows = $stmt->fetch();
-                    $t_show_id = $rows['max_id'];
-        
-                    //echo "show ID is $t_show_id <BR>";
-                    //insert all types of seats into Seats table for the given theatre
-                    for($j=1; $j<=$seatTypesCount; $j++){ 
-                        $sType = $seatTypes[$j];
-                        $sNumbers = $no_of_seats[$j];
-                       
-                        $sql_insert2 = "INSERT INTO $t_show_inventory (inventory_show_id, inventory_seat_type, inventory_seats_available) 
-                            VALUES ($t_show_id,'$sType',$sNumbers)";
-                        //echo "SQL Statement $sql_insert2 <BR>";
-                        $stmt2 = $db->prepare($sql_insert2);
-                        $rows2 = $stmt2->execute(array());
-                        if (rows2 > 0 ){
-                            echo "Inventory updated successfully for $t_show_id with seat type $sType <BR>";
-                        }
-                    } 
-                }
-
-            }
-        } 
-    } */
 
 } catch (PDOException $e) {
     print "Error!: " . $e->getMessage() . "<br/>";
@@ -179,7 +87,7 @@ try {
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
-    <title>Insert New Movie</title>
+    <title>iMovies - Online Movie Reservation System</title>
 </head>
 
 <body>
@@ -322,25 +230,19 @@ try {
                                     <th class="col-sm-2">Show_ID</th>
                                     <th class="col-sm-2">Show_Date</th>
                                     <th class="col-sm-2">Show_Slot </th>
-                                    <th class="col-sm-3">Show_Status </th>
-                                    <th class="col-sm-3">Select to Act</th>
+                                    <th class="col-sm-3">Tickets Booked </th>
+                                    <th class="col-sm-3">Total Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php     
                                 for($i=1; $i <= count($showTable); $i++){
-                                    echo "<tr><td style='text-align:center'>". $showTable[$i]['show_id'] . "</td>";
+                                    echo "<tr><td style='text-align:center'><a href=ticketsFull.php?show_id=". 
+                                        $showTable[$i]['show_id'] . ">" .  $showTable[$i]['show_id'] . "</td>";
                                     echo "<td>". $showTable[$i]['show_date'] . "</td>";
                                     echo "<td style='text-align:center'>" . $showTable[$i]['show_slot'] . "</td>";
-                                    echo "<td style='text-align:center'>" . $showTable[$i]['show_status'] . "</td>";
-                                    ?>
-                                <td style='text-align:center'>
-                                    <input type="checkbox" class="form-check-input" id="closeShow" name="closeShow[]"
-                                        value=<?php echo $showTable[$i]['show_id']; ?>>Close Show
-                                    <?php echo $showTable[$i]['show_id']; ?> </input>
-                                </td>
-                                </tr>
-                                <?php
+                                    echo "<td style='text-align:center'>" . $showTable[$i]['booked'] . "</td>";
+                                    echo "<td style='text-align:center'>" . $showTable[$i]['amount'] . "</tr></td>";
                                 }
                             ?>
                             </tbody>

@@ -6,6 +6,14 @@ if (isset($_SESSION["uid"])) {
     $uid = $_SESSION["uid"];
 }
 
+if(isset($_SESSION['errorMessage'])){
+    echo "<script type='text/javascript'>
+            alert('" . $_SESSION['errorMessage'] . "');
+          </script>";
+    //to not make the error message appear again after refresh:
+    unset($_SESSION['errorMessage']);
+}
+
 if (
     isset($_POST["login"]) && !empty($_POST["uid"])
     && !empty($_POST["pwd"])
@@ -239,16 +247,18 @@ try {
                 </ol> <BR>
                 <ol>For Admin Users:
                     <li>
-                       Admin Users can add new movies, add new theatres, define type of seats in those theatres, schedule shows.
+                        Admin Users can add new movies, add new theatres, define type of seats in those theatres,
+                        schedule shows.
                     </li>
                     <li>
-                        Use Add Movies to add any new movie with key informations like movie title, director, language and etc.
+                        Use Add Movies to add any new movie with key informations like movie title, director, language
+                        and etc.
                     </li>
                     <li>
                         Currenlty theatres can be added only in 3 cities such as Vellore, Bangalore and Chennai
                     </li>
                 </ol>
-                                
+
 
             </div>
 
@@ -259,11 +269,9 @@ try {
     </div>
     <!-- footer section goes here-->
 
-    <div class="navbar fixed-bottom">
         <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
-            <h3> Developed using following technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap, Javascript.</h3>
+            <h3> Developed using technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap, Javascript.</h3>
         </div>
-    </div>
 
 </body>
 

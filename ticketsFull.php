@@ -3,15 +3,14 @@
 session_start();
 
 if (isset($_SESSION["uid"])) {
-    //echo "UID is set <BR>";
     $uid = $_SESSION["uid"];
-} else {
-    header('Refresh:1   ; url=./login.php');
-    echo 'Please Log In First';
-    exit();
+}
+if (isset($_SESSION["isadmin"])) {
+    $isadmin = TRUE;
 }
 
-$resid = $_GET['p_resid'];
+
+$showid = $_GET['show_id'];
 
 include './database/config/config.php';
 if ($connection == "local") {
@@ -38,34 +37,39 @@ try {
     $db = new PDO("mysql:host=$host", $user, $password, $options);
     //echo "Database connected successfully <BR>";
 
-    $cust_id = $db->query("Select cust_id from $t_customer where cust_username = '$uid'")->fetch()['cust_id'];
-    $rs1 = $db->query("select a.reservation_id, c.movie_title, d.theatre_name, d.theatre_location, 
-            b.show_date, b.show_slot, a.reservation_seat_type, a.reservation_seats_booked, a.reservation_amount
+    //$cust_id = $db->query("Select cust_id from $t_customer where cust_username = '$uid'")->fetch()['cust_id'];
+    $rs1 = $db->query("select distinct b.show_id, c.movie_title, d.theatre_name, d.theatre_location, 
+            b.show_date, b.show_slot
             from $t_reservation a, $t_shows b, $t_movies c, $t_theatre d
-            where a.reservation_cust_id = $cust_id and a.reservation_id = $resid and a.reservation_show_id = b.show_id and 
+            where b.show_id = $showid and a.reservation_show_id = b.show_id and 
             b.show_movie_id=c.movie_id and b.show_theatre_id = d.theatre_id")->fetch();
 
-    $myBookings['resid']    = $rs1['reservation_id'];
+    $myBookings['showid']    = $rs1['show_id'];
+    //echo "show id after fetch" .  $myBookings['showid']  . "<BR>";
     $myBookings['title']    = $rs1['movie_title'];
     $myBookings['tname']    = $rs1['theatre_name'];
     $myBookings['tcity']    = $rs1['theatre_location'];
     $myBookings['date']     = $rs1['show_date'];
     $myBookings['slot']     = $rs1['show_slot'];
-    $myBookings['seat']     = $rs1['reservation_seat_type'];
-    $myBookings['qty']      = $rs1['reservation_seats_booked'];
-    $myBookings['amt']      = $rs1['reservation_amount'];
     
-    $tcount = $db->query("Select count(*) as tcount from $t_ticket where ticket_reservation_id=$resid")->fetch()['tcount'];
+    //$tcount = $db->query("Select count(*) as tcount from $t_ticket where ticket_reservation_id=$resid")->fetch()['tcount'];
 
     $i=1;
-    foreach($db->query("Select ticket_id, ticket_name, ticket_age, ticket_gender 
-                from $t_ticket where ticket_reservation_id = $resid") as $rs2){
+    $showAmount=0;
+    foreach($db->query("Select ticket_id, ticket_name, ticket_age, ticket_gender , b.reservation_seat_type, 
+                b.reservation_amount / b.reservation_seats_booked as ticket_cost
+                from $t_ticket a, $t_reservation b, $t_shows c where c.show_id=$showid and
+                b.reservation_show_id=c.show_id and a.ticket_reservation_id = b.reservation_id") as $rs2){
 
         $myTicket[$i]['tid']    = $rs2['ticket_id'];
         $myTicket[$i]['tname']    = $rs2['ticket_name'];
+        $myTicket[$i]['ttype']    = $rs2['reservation_seat_type'];
+        $myTicket[$i]['tcost']    = round($rs2['ticket_cost'],0);
         $myTicket[$i]['tage']    = $rs2['ticket_age'];
         $myTicket[$i]['tgender']    = $rs2['ticket_gender'];
-        $myTicket[$i]['tamount']    = $myBookings['amt']/$tcount;
+
+        //echo  $myTicket[$i]['tname']  . "<BR>";
+        $showAmount = $showAmount + $myTicket[$i]['tcost'] ;
         $i++;
 
     }
@@ -154,30 +158,53 @@ try {
                         <nav class="navbar bg-light">
                             <ul class="navbar-nav">
                                 <li class="nav-item">
-                                    <a class="nav-link">Movies</a>
+                                    <a class="nav-link">Basic</a>
                                     <nav class="navbar bg-light">
                                         <ul class="navbar-nav">
                                             <li class="nav-item">
-                                                <a class="nav-link" href="./viewLang.php">By Language</a>
+                                                <a class="nav-link" href="./addMovie.php">Add Movie</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="./viewTheatre.php">By Theatre</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="./viewAll.php">All</a>
+                                                <a class="nav-link" href="./addTheatre.php">Add Theatre / Seats</a>
                                             </li>
                                         </ul>
                                     </nav>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="./myBookings.php">My Bookings</a>
+                                    <a class="nav-link">Main</a>
+                                    <nav class="navbar bg-light">
+                                        <ul class="navbar-nav">
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="./addShow.php">Add Show / Inventory</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="./manageShow.php">Manage Shows</a>
+                                            </li>
+                                        </ul>
+                                    </nav>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="aboutUs.php">About us</a>
+                                    <a class="nav-link">Report</a>
+                                    <nav class="navbar bg-light">
+                                        <ul class="navbar-nav">
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="./ticketsShow.php">Tickets by Show</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="./collectionTheatre.php">Collection by
+                                                    Theatre</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="./collectionMovie.php">Collection by Movie</a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">About us</a>
                                 </li>
                             </ul>
                         </nav>
-
                         <!-- left side nvertical navigation bar ends here -->
                     </div>
 
@@ -192,28 +219,26 @@ try {
                         <table id="myTable" class=" table order-list table-bordered table-sm">
                             <thead class="bg-primary">
                                 <tr>
-                                    <th>Res.ID</th>
+                                    <th>Show ID</th>
                                     <th>Movie Title</th>
                                     <th>Theatre</th>
                                     <th>Show Date</th>
                                     <th>Show Slot</th>
-                                    <th>Seat Type</th>
-                                    <th># of Seats</th>
-                                    <th>Amount</th>
+                                    <th># of Tickets</th>
+                                    <th>Show Amount</th>
+                                
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
                                   
-                                        echo "<tr><td>". $myBookings['resid'] . "</td>";
+                                        echo "<tr><td>". $myBookings['showid'] . "</td>";
                                         echo "<td>" . $myBookings['title'] . "</td>";
                                         echo "<td>" . $myBookings['tname'] . "(" . $myBookings['tcity'] . ")</td>";
                                         echo "<td>" . $myBookings['date'] . "</td>";
                                         echo "<td>" . $myBookings['slot'] . "</td>";
-                                        echo "<td>" . $myBookings['seat']  . "</td>";
-                                        echo "<td>" . $myBookings['qty'] . "</td>";
-                                        echo "<td>" . $myBookings['amt'] . "</td></tr>";
-                    
+                                        echo "<td>" . count($myTicket)  . "</td>";
+                                        echo "<td>" . $showAmount . "</td></tr>";
                                  
                                 ?>
                             </tbody>
@@ -229,18 +254,20 @@ try {
                                     <th>TicketID</th>
                                     <th>Name</th>
                                     <th>Age</th>
-                                    <th>Gendder</th>
+                                    <th>Gender</th>
+                                    <th>Seat Type</th>
                                     <th>Cost</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                    for($i=1; $i<=$tcount; $i++){ 
+                                    for($i=1; $i<=count($myTicket); $i++){ 
                                         echo "<tr><td>" . $myTicket[$i]['tid'] . "</td>";
                                         echo "<td>" . $myTicket[$i]['tname'] . "</td>";
                                         echo "<td>" . $myTicket[$i]['tage'] . "</td>";
                                         echo "<td>" . $myTicket[$i]['tgender']  . "</td>";
-                                        echo "<td>" . $myTicket[$i]['tamount'] . "</td></tr>";
+                                        echo "<td>" . $myTicket[$i]['ttype']  . "</td>";
+                                        echo "<td>" . $myTicket[$i]['tcost'] . "</td></tr>";
                     
                                     }   
                                 ?>

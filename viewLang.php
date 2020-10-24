@@ -22,7 +22,7 @@ if ($connection == "local") {
 <html lang="en">
 
 <head>
-    <title>iMovies -  Online Movies Reservation System</title>
+    <title>iMovies - Online Movies Reservation System</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -60,24 +60,25 @@ if ($connection == "local") {
             if (isset($_SESSION["uid"])) {
 
             ?>
-                <!-- Set rightside navbar links if no user signed-in -->
-                <ul class="navbar-nav navbar-right">
-                    <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown">Welcome <?php echo $uid; ?></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
-                            
-                            <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
+            <!-- Set rightside navbar links if no user signed-in -->
+            <ul class="navbar-nav navbar-right">
+                <li class="dropdown text-info"><a class="dropdown-toggle" data-toggle="dropdown">Welcome
+                        <?php echo $uid; ?></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
+
+                        <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
 
             <?php } else { ?>
-                <!-- Set rightside navbar links if user has signed-in -->
-                <ul class="navbar-nav navbar-right">
-                    <li class="nav-item">
-                        <a class="nav-link" href="./login.php"><i class="fa fa-sign-in"></i> Login</a>
-                    </li>
-                </ul>
+            <!-- Set rightside navbar links if user has signed-in -->
+            <ul class="navbar-nav navbar-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="./login.php"><i class="fa fa-sign-in"></i> Login</a>
+                </li>
+            </ul>
             <?php } ?>
 
         </div>
@@ -125,18 +126,23 @@ if ($connection == "local") {
                 </div>
             </div>
             <!-----content add -->
-            <div class="container" style="margin-top:20px">
+            <div class="container" style=" width:80% ">
                 <div class="row">
 
                     <form action="viewLang2.php" method="post" class="was-validated" enctype="multipart/form-data">
                         <div class="form-group">
                             <label class="font-weight-bold" for="mov_lang">Movie Language:</label> <BR>
-                            <label class="radio-inline"><input type="radio" name="mov_lang" value="English">English</label>
+                            <label class="radio-inline"><input type="radio" name="mov_lang"
+                                    value="English">English</label>
                             <label class="radio-inline"><input type="radio" name="mov_lang" value="Hindi">Hindi</label>
-                            <label class="radio-inline"><input type="radio" name="mov_lang" value="Kannada">Kannada</label>
-                            <label class="radio-inline"><input type="radio" name="mov_lang" value="Malayalam">Malayalam</label>
-                            <label class="radio-inline"><input type="radio" name="mov_lang" value="Tamil" checked>Tamil</label>
-                            <label class="radio-inline"><input type="radio" name="mov_lang" value="Telugu">Telegu</label>
+                            <label class="radio-inline"><input type="radio" name="mov_lang"
+                                    value="Kannada">Kannada</label>
+                            <label class="radio-inline"><input type="radio" name="mov_lang"
+                                    value="Malayalam">Malayalam</label>
+                            <label class="radio-inline"><input type="radio" name="mov_lang" value="Tamil"
+                                    checked>Tamil</label>
+                            <label class="radio-inline"><input type="radio" name="mov_lang"
+                                    value="Telugu">Telegu</label>
                             <label class="radio-inline"><input type="radio" name="mov_lang" value="Other">Other</label>
                         </div>
 
@@ -150,12 +156,13 @@ if ($connection == "local") {
 
                     <img src="./img/viewpageImage2.jpg" alt="searchGuy">
                 </div>
+            </div> <BR>
+
+            <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
+                <h3> Developed using technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap, Javascript.
+                </h3>
             </div>
-            <div class="navbar fixed-bottom">
-                <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
-                    <h3> Developed using following technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap, Javascript.</h3>
-                </div>
-            </div>
+
 
 </body>
 

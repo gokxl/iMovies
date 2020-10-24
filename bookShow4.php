@@ -49,7 +49,20 @@ try {
     //Fetch cost of ticket based on theatre_id and seat_type
     $unitPrice = $db->query("SELECT seat_price from $t_seats where seat_theatre_id = $theatre_id and 
                                 seat_type = '$ttype'")->fetch()['seat_price'];
-    //echo "Unit Price for given theatre & seat type combination is : $unitPrice <BR>";    
+    //Check available seats are more than the requested number of seats
+    $availSeats = $db->query("SELECT inventory_seats_available as seats from $t_show_inventory 
+                    where inventory_show_id = $tshow_id and inventory_seat_type='$ttype'")->fetch()['seats'];
+
+    //Check if insufficient seats, popup alert message and return to prevoius screen     
+    if ($tcount>$availSeats) {
+        
+        //echo '<script>alert("Insufficient seats. Try different seat type / date / slot.")</script>';
+        session_start();
+        $_SESSION['errorMessage'] = "Insufficient Seats Availability. Try different slot/date/seat type. ";
+        header("Location: ./index2.php");
+        exit();
+    }
+
 
     //Fetch seat types and available seats from show inventory table 
     $i=1;
@@ -173,6 +186,8 @@ try {
                 </div>
             </div>
             <!-- Add Show Form starts here -->
+
+            
 
             <div class="container" style=" width:80% ">
                 <form action="bookFinal.php" method="post" enctype="multipart/form-data">
@@ -320,9 +335,9 @@ try {
 
         <!-- footer section goes here-->
 
-        <div class="navbar fixed-bottom">
+        <div class="navbar">
             <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
-                <h3> Developed using following technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap, Javascript.
+                <h3> Developed using technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap, Javascript.
                 </h3>
             </div>
         </div>

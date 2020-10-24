@@ -257,11 +257,9 @@ if (isset($_POST['err'])) {
     <?php } ?>
     <!-- footer section goes here-->
 
-    <div class="navbar fixed-bottom">
         <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
-            <h3> Developed using following technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap, Javascript.</h3>
+            <h3> Developed using technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap, Javascript.</h3>
         </div>
-    </div>
 
 </body>
 

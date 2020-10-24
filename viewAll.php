@@ -6,7 +6,7 @@ if (isset($_SESSION["uid"])) {
     $uid = $_SESSION["uid"];
 }
 
-$chosenLang = $_POST['mov_lang'];
+//$chosenLang = $_POST['mov_lang'];
 //echo "chosen language is $chosenLang<br>";
 
 include './database/config/config.php';
@@ -25,7 +25,7 @@ try {
 
     $i = 1;
     foreach ($db->query("select movie_id, movie_title,movie_language,movie_cast,movie_description,movie_image_fn 
-            from $t_Movies where movie_language = '$chosenLang'") as $rs1) {
+            from $t_Movies") as $rs1) {
         //echo 'movie title is: ' . $rs1['movie_title'] . "<BR>";
 
         $movieTable[$i]['movie_id'] = $rs1['movie_id']; 
