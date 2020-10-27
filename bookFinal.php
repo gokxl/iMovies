@@ -61,6 +61,21 @@ try {
     $seats_available = $db->query("SELECT inventory_seats_available from $t_show_inventory where inventory_show_id = $tshow_id
                                         and inventory_seat_type='$ttype'")->fetch()['inventory_seats_available'];
 
+
+    echo "Seats requessted: $tcount <BR>";
+    echo "seats available: $$seats_available <BR>";
+
+    //Check if insufficient seats, popup alert message and return to prevoius screen     
+    if ($tcount>$seats_available) {
+        
+        //echo '<script>alert("Insufficient seats. Try different seat type / date / slot.")</script>';
+        session_start();
+        $_SESSION['errorMessage'] = "Insufficient Seats Availability. Try different slot/date/seat type. ";
+        header("Location: ./index2.php");
+        exit();
+    }
+
+
     $sql_insert1 = "INSERT INTO $t_reservation(reservation_show_id, reservation_cust_id, reservation_seat_type, 
         reservation_seats_booked, reservation_amount, reservation_payment_status, reservation_payment_mode) 
         VALUES ($tshow_id, $cust_id, '$ttype', $tcount, $tamount, 'Payment success', '$tpaymode')";

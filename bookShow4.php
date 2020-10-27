@@ -53,7 +53,7 @@ try {
     $availSeats = $db->query("SELECT inventory_seats_available as seats from $t_show_inventory 
                     where inventory_show_id = $tshow_id and inventory_seat_type='$ttype'")->fetch()['seats'];
 
-    //Check if insufficient seats, popup alert message and return to prevoius screen     
+    //Check if insufficient seats, popup alert message and return to prevoius screen         
     if ($tcount>$availSeats) {
         
         //echo '<script>alert("Insufficient seats. Try different seat type / date / slot.")</script>';
@@ -62,7 +62,7 @@ try {
         header("Location: ./index2.php");
         exit();
     }
-
+    
 
     //Fetch seat types and available seats from show inventory table 
     $i=1;
