@@ -43,13 +43,39 @@ if (
         die();
     }
 }
+
+//Fetch latest 6 movies and related images for corousel display
+include './database/config/config.php';
+//set table name based on local or remote connection
+if ($connection == "local") {
+    $t_Movies = "movies";
+} else {
+    $t_Movies = "$database.movies";
+}
+try {
+    $i = 1;
+    $db = new PDO("mysql:host=$host", $user, $password, $options);
+
+    foreach ($db->query("select movie_id,movie_title,movie_image_fn,movie_cast
+                from $t_Movies order by movie_id desc limit 6") as $rs1) {
+
+        $movieTable[$i]['movie_image_fn'] = $rs1['movie_image_fn'];
+        $movieTable[$i]['movie_title'] = $rs1['movie_title'];
+        $movieTable[$i]['movie_cast'] = $rs1['movie_cast'];
+
+        $i++;
+    }
+} catch (PDOException $e) {
+    print "Error!: " . $e->getMessage() . "<br/>";
+    die();
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>iMovies -  Online Movies Reservation System</title>
+    <title>iMovies - Online Movies Reservation System</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -93,7 +119,7 @@ if (
                             class="fa fa-user-secret"></i> Welcome <?php echo $uid; ?></a>
                     <ul class="dropdown-menu">
                         <li><a href="#"> <i class="fa fa-user-plus"></i> My Profile</a></li>
-                  
+
                         <li><a href="./logout.php"> <i class="fa fa-sign-out"></i> Logout</a></li>
                     </ul>
                 </li>
@@ -156,7 +182,8 @@ if (
                                                 <a class="nav-link" href="./ticketsShow.php">Tickets by Show</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="./collectionTheatre.php">Collection by Theatre</a>
+                                                <a class="nav-link" href="./collectionTheatre.php">Collection by
+                                                    Theatre</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a class="nav-link" href="./collectionMovie.php">Collection by Movie</a>
@@ -175,66 +202,97 @@ if (
 
                 </div>
             </div>
+
             <!-- Carousel begins here which occupies 10/12 of width -->
 
-            <div class="col-sm-10">
-                <div id="demo" class="carousel slide" data-ride="carousel">
+            <div class="container" style=" width:80% ">
+                <h4 class="text-primary"> Trending movies </h4>
+
+                <div id="myCarousel" class="carousel slide" data-ride="carousel">
 
                     <!-- Indicators -->
                     <ul class="carousel-indicators">
-                        <li data-target="#demo" data-slide-to="0" class="active"></li>
-                        <li data-target="#demo" data-slide-to="1"></li>
+                        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                        <li data-target="#myCarousel" data-slide-to="1"></li>
                     </ul>
 
                     <!-- The slideshow -->
                     <div class="carousel-inner">
                         <div class="carousel-item active">
                             <div class="row">
+                                <?php for ($j = 1; $j <= 3; $j++) { ?>
                                 <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
+                                    <img src="./database/images/<?php echo $movieTable[$j]['movie_image_fn']; ?>"
+                                        alt="<?php echo $movieTable[$i]['movie_title']; ?>" style="width:100%;">
                                 </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
+                                <?php } ?>
                             </div>
                         </div>
                         <div class="carousel-item">
                             <div class="row">
+                                <?php for ($j = 4; $j <= 6; $j++) { ?>
                                 <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
+                                    <img src="./database/images/<?php echo $movieTable[$j]['movie_image_fn']; ?>"
+                                        alt="<?php echo $movieTable[$i]['movie_title']; ?>" style="width:100%;">
                                 </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
-                                <div class="col-sm-4">
-                                    <img src="./img/ratsasan6.jpg" alt="Ratsasan">
-                                </div>
+                                <?php } ?>
                             </div>
                         </div>
+
                         <!-- Left and right controls -->
-                        <a class="carousel-control-prev" href="#demo" data-slide="prev">
+                        <a class="carousel-control-prev" href="#myCarousel" data-slide="prev">
                             <span class="carousel-control-prev-icon"></span>
                         </a>
-                        <a class="carousel-control-next" href="#demo" data-slide="next">
+                        <a class="carousel-control-next" href="#myCarousel" data-slide="next">
                             <span class="carousel-control-next-icon"></span>
                         </a>
                     </div>
                 </div>
+
+                <BR>
+                <h4 class="text-primary"> iMovies - Online Reservation System Key features: </h4>
+                <ol>Admin Users:
+                    <li>
+                        Admin Users can add new movies, add new theatres, define type of seats in those theatres,
+                        schedule shows.
+                    </li>
+                    <li>
+                        Use Add Movies to add any new movie with key informations like movie title, director, language
+                        and etc.
+                    </li>
+                    <li>
+                        Use Add Theatre to add new theatre and type of seats, number of seats in that. 
+                        Currenlty theatres can be added only in 3 cities such as Vellore, Bangalore and Chennai
+                    </li>
+                    <li>
+                        Use Add Show/Inventory option to schedule movie shows in the selected theatre, for specific 
+                        dates and slots. If shows are already shcheduled, conflict details will be displayed
+                    </li>
+                    <li>
+                        Use Manage Shows option to close scheduled shows in the selected theatre, for a specific date and slots
+                    </li>
+                    <li>
+                        Use varioius report options for administrative and management purpose. eg., use Tickets by Show to 
+                        view list of all customers for a particular show and total collection for that show.
+                    </li>
+                    
+                    
+                </ol>
+
+
             </div>
 
             <!-- Carousel ends here which occupies 10/12 of width -->
+
 
 
         </div>
     </div>
     <!-- footer section goes here-->
 
-        <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
-            <h3> Developed using technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap, Javascript.</h3>
-        </div>
+    <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
+        <h3> Developed using technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap, Javascript.</h3>
+    </div>
 
 </body>
 
