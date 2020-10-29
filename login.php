@@ -199,15 +199,15 @@ if (isset($_SESSION["uid"])) {
                     </p>
                 </div>
 
-            </div>
+            </div><BR><BR><BR>
         </div>
 
-        <div class="navbar">
+      
             <div class="container-fluid text-center bg-primary text-white fill-height pt-3">
                 <h3> Developed using technology stack: PHP, MySQL, Apache, HTML5, CSS, Bootstrap, Javascript.
                 </h3>
             </div>
-        </div>
+    
 
         <script language="Javascript">
         function loginSubmit() {

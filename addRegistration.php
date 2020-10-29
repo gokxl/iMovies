@@ -237,8 +237,8 @@ if (isset($_POST['err'])) {
                                 </form>
                             </div>
                         </div>
-                </div>
-            </div>
+                </div><BR><BR><BR><BR>
+            </div> 
 
             <!--registration form ends here -->
 
